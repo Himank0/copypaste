@@ -1,491 +1,239 @@
-# TOOL_STRATEGY.md - Copilot Tool Strategy & Reflection
+# ARCHITECTURE.md - System Architecture Documentation
 
 ```markdown
-# Tool Strategy & Reflection - GitHub Copilot
+# Architecture Documentation - Notification & Audit Service
 
-## 1. Feature Usage Log
+## 1. Service Relationship & Integration Contract
 
-This section documents how I used GitHub Copilot across the TaskBridge case study. Each entry demonstrates strategic feature selection based on the task requirements.
+The Project Service and Notification & Audit Service operate in a **synchronous integration pattern** where the Project Service acts as the orchestrator. When a project milestone changes (create/update/delete/reopen), the Project Service makes sequential calls to:
 
----
+- **Audit Service** via `auditService.recordAudit()` - captures immutable before/after state snapshots with actor IP address
+- **Notification Service** via `notificationService.createNotification()` - dispatches real-time alerts to all team members
 
-### Entry 1: Specification Generation with Ask Mode
-
-**Where in the Case Study:** Part A - SPEC.md Creation
-
-**Copilot Feature Used:** Ask Mode (Chat)
-
-**Why This Feature (Not Another):**
-- Ask Mode is ideal for brainstorming and generating structured documents
-- Unlike Agent Mode, it doesn't modify files - perfect for spec creation
-- Provides conversational refinement without committing code
-- Allows easy iteration on requirements
-
-**What Happened:**
-- Prompted: *"Act as a senior software architect. Generate a technical specification for a Notification & Audit Service..."*
-- Copilot produced comprehensive SPEC.md with data models, API contracts, and integration points
-- Generated 80% usable content with clear structure
-- Required manual refinement for Java-specific syntax and multi-tenant details
+**Integration Contract:**
+- Audit calls are **synchronous and transactional** - if audit fails, the entire project operation rolls back
+- Notification calls are **synchronous but non-blocking** - failures are logged but don't rollback the transaction
+- Both services expose **REST APIs** for query operations (GET /audit, GET /notifications)
 
 ---
 
-### Entry 2: Multi-File Code Generation with Agent Mode
-
-**Where in the Case Study:** Part C - Building Notification & Audit Service
-
-**Copilot Feature Used:** Agent Mode
-
-**Why This Feature (Not Another):**
-- Agent Mode can generate multiple related files simultaneously
-- Understands dependencies between models, repositories, services, and controllers
-- Reduces context-switching compared to Ask Mode
-- Maintains consistency across files
-
-**What Happened:**
-- Prompted: *"Generate AuditService with recordAudit() and getAuditHistory() methods..."*
-- Copilot generated: AuditLog.java, AuditRepository.java, AuditService.java simultaneously
-- Consistent naming patterns across all files
-- Correctly implemented immutability constraint
-- Required manual addition of IP address parameter and validation annotations
-
----
-
-### Entry 3: Targeted Refinements with Edit Mode
-
-**Where in the Case Study:** Part B - Project Service Remediation
-
-**Copilot Feature Used:** Edit Mode (Inline editing)
-
-**Why This Feature (Not Another):**
-- Edit Mode is perfect for surgical fixes to existing code
-- Shows diff preview before applying changes
-- More precise than regenerating entire files
-- Faster than manual editing for repetitive patterns
-
-**What Happened:**
-- Prompted: *"Add @Transactional to all service methods and update exception handling"*
-- Copilot added annotations to 6+ methods in one operation
-- Updated exception types from RuntimeException to specific exceptions
-- Added proper logging statements
-- Maintained existing code structure without breaking functionality
-
----
-
-### Entry 4: Context-Aware Assistance with @workspace
-
-**Where in the Case Study:** Part C - Architecture Validation
-
-**Copilot Feature Used:** Ask Mode + @workspace
-
-**Why This Feature (Not Another):**
-- @workspace provides full project context to Copilot
-- Understands relationships between files and packages
-- Better for architectural questions than isolated file references
-- Helps identify gaps the AI might miss
-
-**What Happened:**
-- Prompted: *"@workspace Review current project structure. Does it support multi-service architecture?"*
-- Copilot identified missing packages for audit and notification services
-- Suggested proper package structure
-- Flagged that ProjectService wasn't integrated with audit/notification services
-- Recommended adding integration dependencies
-
----
-
-### Entry 5: Test Generation with /tests Command
-
-**Where in the Case Study:** Part C - Test Implementation
-
-**Copilot Feature Used:** Ask Mode + /tests Command
-
-**Why This Feature (Not Another):**
-- /tests command specifically generates test scaffolding
-- Understands JUnit 5 and Mockito patterns
-- Creates comprehensive test structure with AAA pattern
-- Saves significant time compared to manual test writing
-
-**What Happened:**
-- Prompted: *"/tests Generate unit tests for AuditService covering 6 scenarios"*
-- Copilot generated 8 test methods with Mockito setup
-- Included assertions and mocking patterns
-- Generated 70% usable code
-- Required manual refinement for edge cases and assertion specifics
-
----
-
-### Entry 6: Code Understanding with /explain
-
-**Where in the Case Study:** Part B - Code Review
-
-**Copilot Feature Used:** Ask Mode + /explain Command
-
-**Why This Feature (Not Another):**
-- /explain helps understand complex or suspicious code
-- Better than asking generic "what does this do" questions
-- Focuses on specific code blocks rather than entire files
-- Helps identify security vulnerabilities and anti-patterns
-
-**What Happened:**
-- Selected suspicious code block and prompted: */explain this query construction*
-- Copilot explained the SQL injection vulnerability in detail
-- Highlighted missing parameter binding
-- Suggested using JPA query methods instead of raw SQL
-- Identified 3 additional security concerns in related code
-
----
-
-### Entry 7: Documentation Generation with /doc
-
-**Where in the Case Study:** Part B - Project Service Remediation
-
-**Copilot Feature Used:** Edit Mode + /doc Command
-
-**Why This Feature (Not Another):**
-- /doc generates consistent, professional JavaDoc
-- Follows standard documentation conventions
-- Saves time on repetitive documentation tasks
-- Ensures all public methods are documented
-
-**What Happened:**
-- Prompted: *"/doc Generate JavaDoc for all public methods in ProjectService"*
-- Copilot added comprehensive JavaDoc to 8+ methods
-- Included parameter descriptions, return types, and exceptions
-- Added usage examples where helpful
-- Required minor corrections for parameter names
-
----
-
-### Entry 8: Commit Messages with Copilot
-
-**Where in the Case Study:** Part E - Collaboration Artifacts
-
-**Copilot Feature Used:** Copilot-generated commit messages
-
-**Why This Feature (Not Another):**
-- Automatically generates conventional commit format
-- Analyzes staged changes to create accurate messages
-- Saves time on commit message writing
-- Ensures consistency across commits
-
-**What Happened:**
-- Staged changes and let Copilot generate commit messages
-- Generated 5 commits with Conventional Commits format
-- Commit bodies described changes accurately
-- Required minor tweaks for clarity and completeness
-
----
-
-## 2. Scenario Responses
-
-### Scenario 1: Understanding a Complex Legacy Service
-
-**Copilot Feature:** Ask Mode + /explain + @workspace
-
-**Why:**
-- Use Ask Mode to get a high-level overview of the service architecture
-- Use /explain on specific complex functions (500+ lines) to understand logic
-- Use @workspace to understand how this service fits into the overall system
-- This combination provides both macro (architecture) and micro (function) understanding
-
-**Why Not Other Features:**
-- Agent Mode would be overkill - we're not generating code
-- Edit Mode is for changes, not understanding
-- Inline suggestions don't provide contextual understanding
-
----
-
-### Scenario 2: Consistent Request-Validation Middleware
-
-**Copilot Feature:** Agent Mode + #file References
-
-**Why:**
-- Agent Mode can generate code across multiple files simultaneously
-- #file references help it understand the existing route handler patterns
-- Generates consistent validation logic across 10+ handlers
-- Ensures standards compliance through a single prompt
-
-**Why Not Other Features:**
-- Edit Mode would be tedious for 10+ files
-- Ask Mode would only suggest, not implement
-- Inline suggestions would require manual application to each file
-
----
-
-### Scenario 3: JWT Implementation Verification
-
-**Copilot Feature:** Ask Mode + /explain
-
-**Why:**
-- Ask Mode allows a security-focused review
-- /explain can analyze the verification logic step by step
-- You can ask specific questions: *"Does this handle expired tokens?"*
-- Copilot can identify missing edge cases in the implementation
-
-**Why Not Other Features:**
-- Agent Mode doesn't analyze existing code
-- Edit Mode is for changes, not verification
-- Inline suggestions don't perform security analysis
-
----
-
-### Scenario 4: Automated CI/CD Quality Checks
-
-**Copilot Feature:** Not Copilot (GitHub Actions + Copilot-suggested config)
-
-**Why:**
-- This is beyond Copilot's capabilities - requires CI/CD automation
-- However, Copilot can help by suggesting GitHub Actions workflows
-- Use Ask Mode: *"Generate a GitHub Actions workflow that enforces linting and test coverage"*
-- Copilot can provide the YAML configuration
-
-**Why Not Copilot:**
-- Copilot cannot enforce automated checks - it's an assistant, not a CI/CD tool
-- Human must configure the automation
-- Copilot can help write the configuration but not enforce it
-
----
-
-### Scenario 5: Security Review of AI-Generated Module
-
-**Copilot Feature:** Ask Mode + /explain + Role-Based Prompting
-
-**Why:**
-- Use role-based prompting: *"Act as a security engineer"*
-- Ask Copilot to identify vulnerabilities: *"List all security issues in this module"*
-- Use /explain on suspicious code blocks for deeper analysis
-- Challenge Copilot's assumptions: *"Is this vulnerable to XSS?"*
-
-**Why Not Other Features:**
-- Agent Mode is for generation, not review
-- Edit Mode assumes code is correct
-- Inline suggestions don't provide comprehensive analysis
-
----
-
-### Scenario 6: Multi-Tenant Isolation Rules
-
-**Copilot Feature:** .github/copilot-instructions.md + @workspace
-
-**Why:**
-- Custom instructions file provides persistent guidance across all sessions
-- @workspace ensures Copilot understands the multi-tenant context
-- Together, they enforce consistent rules for all developers
-- No need to repeat security requirements in every prompt
-
-**Why Not Other Features:**
-- Individual prompts would be inconsistent
-- Ask Mode doesn't persist across sessions
-- Agent Mode is for generation, not policy enforcement
-
----
-
-## 3. Limitations Encountered
-
-### Limitation 1: Missing Multi-Tenant Security
-
-**What I Prompted:**
-> *"Generate a ProjectService with create, update status, get by team, and delete functions using a database."*
-
-**What Copilot Produced:**
-```java
-public List<Project> getAllProjects() {
-    return projectRepository.findAll(); // Returns ALL projects, no org filter
-}
-
-public void deleteProject(Long id) {
-    projectRepository.deleteById(id); // No authorisation check
-}
+## 2. Layered Architecture & Data Flow
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         CLIENT / API CONSUMER                       │
+└─────────────────────────────┬───────────────────────────────────────┘
+                              │ HTTP Request
+                              ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      CONTROLLER LAYER                              │
+│  • Request validation & header extraction (X-User-Id, X-Org-Id)   │
+│  • DTO mapping & response formatting                              │
+│  • Exception handling (404, 403, 400)                            │
+└─────────────────────────────┬───────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                       SERVICE LAYER                                │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │                    PROJECT SERVICE                           │   │
+│  │  • Business logic (create, update, delete)                 │   │
+│  │  • Multi-tenant validation (org access)                    │   │
+│  │  • Status transition validation                            │   │
+│  │  • Orchestrates audit & notification calls                │   │
+│  └──────────────┬──────────────┬───────────────────────────────┘   │
+│                 │              │                                    │
+│  ┌──────────────▼──────────────▼───────────────────────────────┐   │
+│  │              AUDIT SERVICE          NOTIFICATION SERVICE     │   │
+│  │  • Immutable audit entries       • Team member dispatch    │   │
+│  │  • JSON state snapshots          • Read/unread tracking    │   │
+│  │  • IP address capture            • User-based filtering    │   │
+│  │  • Query by date/event type      • Mark as read           │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────┬───────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                     REPOSITORY LAYER                               │
+│  • JPA repository interfaces                                       │
+│  • Multi-tenant filtering (organisationId in all queries)         │
+│  • Custom query methods for filtering (date, event type)          │
+│  • Transaction management                                          │
+└─────────────────────────────┬───────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      DATABASE LAYER                                │
+│  • H2 Database (development) / PostgreSQL (production)            │
+│  • Tables: projects, audit_logs, notifications                   │
+│  • Immutability enforced at service level (no update/delete)     │
+│  • Indices for performance (organisationId, timestamp)           │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
-**What Went Wrong:**
-- No organisation ID filtering
-- Any user could access/delete any project
-- Complete multi-tenant data leakage
-- Violates B2B SaaS security requirements
-
-**How I Detected It:**
-- Manual code review revealed missing WHERE clause
-- Security checklist flagged no authorisation checks
-- Asked: *"How does this prevent cross-tenant access?"*
-- Copilot couldn't answer - code had no safeguards
-
-**How I Fixed It:**
-- Added organisationId to all repository methods
-- Implemented validateOrganisationAccess() method
-- Added user-org validation before any operation
-- Updated all service methods with security checks
-
-**What I'd Do Differently:**
-- Include multi-tenant requirement explicitly in prompts
-- Create custom instructions file before generating code
-- Use security-focused prompts: *"Generate a ProjectService with multi-tenant isolation..."*
-- Review generated code immediately for security gaps
+**Complete Data Flow:**
+1. Client sends request to `POST /api/projects` with headers (X-User-Id, X-Organisation-Id, X-Forwarded-For)
+2. Controller validates headers and passes to ProjectService
+3. ProjectService validates business rules (org access, input validation)
+4. ProjectService saves the project and captures before/after state
+5. **Synchronous Transactional Flow:** ProjectService calls AuditService.recordAudit()
+   - AuditService serializes state to JSON
+   - AuditService creates immutable AuditLog entry with IP address
+   - AuditRepository saves the entry
+6. **Synchronous Non-Blocking Flow:** ProjectService calls NotificationService.createNotification()
+   - NotificationService fetches team members (placeholder for now)
+   - NotificationService creates Notification entries with read=false
+   - NotificationRepository saves all entries
+7. ProjectService returns success response to client
+8. Clients can query audit via `GET /api/audit/{projectId}` or notifications via `GET /api/notifications/unread`
 
 ---
 
-### Limitation 2: Hardcoded Team Members in Notification Service
+## 3. Multi-Tenant B2B SaaS Appropriateness
 
-**What I Prompted:**
-> *"Generate a NotificationService that creates notifications for all team members when a project changes."*
+This architecture is specifically designed for multi-tenant B2B SaaS with the following considerations:
 
-**What Copilot Produced:**
-```java
-public void createNotification(Long userId, String eventType, String message) {
-    // Only creates notification for the single user provided
-    Notification notification = new Notification(userId, eventType, message);
-    notificationRepository.save(notification);
-}
-```
+**Data Isolation:**
+- Every database query includes `organisationId` filter - no cross-tenant data leakage
+- Audit logs and notifications both store `organisationId` for tenant isolation
+- Users can only access their organisation's projects, audits, and notifications
 
-**What Went Wrong:**
-- Only created notification for one user
-- Didn't fetch team members from any source
-- "All team members" was interpreted as "one user"
-- No mechanism to expand to multiple recipients
+**Compliance Ready:**
+- Immutable audit logs satisfy SOC2, GDPR, and compliance requirements
+- IP address capture provides security auditing for investigations
+- Before/after state snapshots enable complete audit trails
 
-**How I Detected It:**
-- Tested with multiple users - only one received notification
-- Reviewed implementation - saw it took single userId
-- Asked: *"Where are the team members fetched from?"*
-- Copilot had no answer - no user service integration
+**Scalability:**
+- Clear separation of concerns allows independent scaling of services
+- Query filtering at repository level (not in-memory) for performance
+- Indices on organisationId and timestamp for efficient queries
 
-**How I Fixed It:**
-```java
-// Added explicit team member list with TODO
-public void createNotification(Long organisationId, String eventType, 
-                               Long projectId, String message) {
-    // TODO: Fetch from User Service in production
-    Long[] teamMembers = {1L, 2L, 3L}; // Example team members
-    for (Long userId : teamMembers) {
-        Notification notification = new Notification(userId, organisationId, 
-                                                     eventType, projectId, message);
-        notificationRepository.save(notification);
-    }
-}
-```
-
-**What I'd Do Differently:**
-- Add a TODO comment during generation
-- Prompt with: *"Fetch team members from User Service"*
-- Or: *"For now, use a placeholder team members list"*
-- Explicitly mention the external dependency
+**Security:**
+- All endpoints require organisation context (headers)
+- Validation at multiple layers (controller, service, repository)
+- No raw SQL - ORM prevents injection attacks
 
 ---
 
-### Limitation 3: Missing Input Validation & Security Annotations
+## 4. Key Design Decisions & Trade-offs
 
-**What I Prompted:**
-> *"Generate an AuditLog model for capturing audit entries."*
+### Decision 1: Synchronous vs Asynchronous Audit
 
-**What Copilot Produced:**
-```java
-@Entity
-public class AuditLog {
-    private String eventType;
-    private String entityType;
-    private Long entityId;
-    private String previousState;
-    private String newState;
-    // No validation annotations
-    // No nullable constraints
-}
-```
+**Chosen:** Synchronous (audit happens in the same transaction as the project update)
 
-**What Went Wrong:**
-- No @NotBlank or @NotNull annotations
-- Could accept null values for required fields
-- No validation at the database or application level
-- Risk of data corruption and inconsistent state
+**Trade-off:**
+- ✅ **Pros:** Guaranteed audit consistency (no lost audit records), simple rollback, immediate feedback
+- ❌ **Cons:** Performance impact if audit database is slow, blocks the main operation
 
-**How I Detected It:**
-- Manual review of model class
-- Validation checklist flagged missing annotations
-- Asked: *"What prevents null values in required fields?"*
-- No validation present - data integrity risk
+**Alternative Considered:** Asynchronous (audit via message queue)
 
-**How I Fixed It:**
-```java
-@Entity
-public class AuditLog {
-    @Column(nullable = false)
-    private String eventType;
-    
-    @Column(nullable = false)
-    private String entityType;
-    
-    @Column(nullable = false)
-    private Long entityId;
-    
-    @Column(nullable = false)
-    private LocalDateTime timestamp;
-    // Added all validation annotations
-}
-```
-
-**What I'd Do Differently:**
-- Add validation requirement to prompt: *"Include validation annotations"*
-- Use specific constraints: *"EventType cannot be null or empty"*
-- Generate with a reference model that had validation
-- Use @workspace to show an example model with validation
+**Why Chosen:** Compliance requires guaranteed audit records - cannot risk losing audit entries. The audit operation is fast enough (JSON serialization + INSERT) to not significantly impact performance.
 
 ---
 
-## 4. Feature Effectiveness Summary
+### Decision 2: Hardcoded Team Members vs User Service Integration
 
-| Feature | Most Effective For | Least Effective For | Overall Rating |
-|---------|-------------------|-------------------|----------------|
-| Ask Mode | Specification, brainstorming, reviews | Complex multi-file generation | ⭐⭐⭐⭐⭐ |
-| Edit Mode | Targeted fixes, refactoring | Large-scale generation | ⭐⭐⭐⭐ |
-| Agent Mode | Multi-file generation, scaffolding | Security reviews | ⭐⭐⭐⭐ |
-| @workspace | Context-aware assistance | Quick questions | ⭐⭐⭐⭐⭐ |
-| #file | Pattern consistency | Novel patterns | ⭐⭐⭐⭐ |
-| /explain | Code understanding, security analysis | Code generation | ⭐⭐⭐⭐⭐ |
-| /tests | Test scaffolding | Edge case generation | ⭐⭐⭐ |
-| /doc | Documentation | Business logic | ⭐⭐⭐⭐ |
-| Inline Ghost | Quick code completion | Complex logic | ⭐⭐⭐ |
+**Chosen:** Placeholder team members {1L, 2L, 3L} with TODO comment
+
+**Trade-off:**
+- ✅ **Pros:** Quick implementation, works for demos, decoupled from User Service
+- ❌ **Cons:** Not production-ready, fails with real user IDs, technical debt
+
+**Alternative Considered:** Integrate User Service immediately
+
+**Why Chosen:** User Service isn't available yet - this service can be built independently. The TODO comment clearly marks the gap for future integration. This is a pragmatic trade-off that allows shipping the feature on time.
 
 ---
 
-## 5. Key Learnings
+### Decision 3: Service-Level vs Database-Level Immutability
 
-### What Worked Well:
-1. **Custom instructions file** was critical for consistency
-2. **@workspace context** dramatically improved relevance
-3. **#file references** maintained pattern consistency
-4. **Edit Mode** was faster than manual editing for targeted fixes
-5. **Ask Mode + role-based prompts** produced better specifications
+**Chosen:** Service-level immutability (no update/delete methods in service layer)
 
-### What Required Human Intervention:
-1. **Security & compliance** - AI consistently missed multi-tenant issues
-2. **Business logic** - Status transitions, team member dispatch
-3. **Production concerns** - Exception handling, null safety, validation
-4. **Architecture decisions** - Service boundaries, integration patterns
+**Trade-off:**
+- ✅ **Pros:** Application logic controls mutability, easier to reason about, no database triggers needed
+- ❌ **Cons:** Could bypass via direct repository access (needs team discipline)
 
-### Top 3 Copilot Limitations:
-1. **Security context awareness** - Missed multi-tenant isolation completely
-2. **Business rule inference** - Couldn't infer status transition rules
-3. **External dependencies** - Hardcoded values instead of service calls
+**Alternative Considered:** Database triggers or constraints
 
-### Future Improvements:
-1. ✅ Create more detailed custom instructions upfront
-2. ✅ Include security requirements in EVERY prompt
-3. ✅ Use more role-based prompting ("Act as a security engineer")
-4. ✅ Always follow up with "What about security?"
-5. ✅ Generate security-focused tests automatically
-6. ✅ Ask Copilot to identify its own limitations
+**Why Chosen:** Service-level immutability provides more flexibility and is easier to test. Repository access is only through service layer in production code, making this safe. Added documentation to enforce the rule.
 
 ---
 
-*Documentation Completed: 2026-07-17*
-*Total Copilot Features Used: 8*
-*Limitations Documented: 3*
-*Feature Effectiveness: 4.2/5 Stars*
+### Decision 4: Multi-Service vs Single Service Layout
+
+**Chosen:** Separate services (Project, Audit, Notification) within the same codebase
+
+**Trade-off:**
+- ✅ **Pros:** Clear separation of concerns, independent evolution, easier testing, modular
+- ❌ **Cons:** More files to manage, potential duplicate code, more complex navigation
+
+**Alternative Considered:** Single monolithic service
+
+**Why Chosen:** The separation aligns with the problem domain - each service has distinct responsibilities. This makes the codebase more maintainable and prepares for potential future microservices migration.
+
+---
+
+### Decision 5: Synchronous Notifications
+
+**Chosen:** Notifications are sent synchronously within the request lifecycle
+
+**Trade-off:**
+- ✅ **Pros:** Simple implementation, immediate feedback, guaranteed delivery
+- ❌ **Cons:** Adds latency to the main operation, blocks the user's request
+
+**Alternative Considered:** Asynchronous notifications via message queue or @Async
+
+**Why Chosen:** For the current scale, synchronous is simpler and sufficient. The operation is fast (just database inserts). If performance becomes an issue, we can easily switch to @Async without changing the API contract.
+
+---
+
+## 5. Technology Stack Summary
+
+| Layer | Technology | Purpose |
+|-------|------------|---------|
+| Language | Java 17 | Modern LTS version |
+| Framework | Spring Boot 3.1.x | REST APIs, dependency injection |
+| ORM | Spring Data JPA | Database abstraction |
+| Database | H2 (dev) / PostgreSQL (prod) | Data persistence |
+| Validation | Jakarta Validation | Input validation |
+| Logging | SLF4J + Logback | Structured logging |
+| JSON | Jackson | State snapshot serialization |
+| Testing | JUnit 5 + Mockito | Unit and integration tests |
+| Build | Maven | Dependency management |
+
+---
+
+## 6. Deployment Considerations
+
+**Containerization:**
+- Each service can run in its own container
+- Shared database but independent schemas
+
+**Scaling:**
+- Audit and Notification services can scale independently
+- Read replicas for audit query endpoints
+
+**Monitoring:**
+- Structured logs for each service
+- Metrics for audit recording latency
+- Alerts for notification delivery failures
+
+**Backup & Recovery:**
+- Audit logs backed up daily (compliance requirement)
+- Immutable audit logs protect against data corruption
+
+---
+
+*Architecture Document Version: 1.0*
+*Last Updated: 2026-07-17*
+*Architectural Decisions: 5 documented*
+*Technology Stack: 9 components*
 ```
 
-This TOOL_STRATEGY.md document provides:
-- ✅ 8 feature usage entries (minimum 6 required)
-- ✅ 4+ different Copilot features (Ask, Edit, Agent, @workspace, #file, /explain, /tests, /doc)
-- ✅ Scenario responses for all 6 scenarios
-- ✅ 3 real limitations with specific examples
-- ✅ Feature effectiveness summary
-- ✅ Key learnings and improvements
+This ARCHITECTURE.md covers:
+- ✅ Service relationship and integration contract
+- ✅ Layered architecture with data flow diagram
+- ✅ Multi-tenant B2B SaaS appropriateness
+- ✅ 5 key design decisions with trade-offs
+- ✅ Technology stack summary
+- ✅ Deployment considerations
