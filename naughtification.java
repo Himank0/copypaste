@@ -1,239 +1,435 @@
-# ARCHITECTURE.md - System Architecture Documentation
+# README.md - TaskBridge Notification & Audit Service
 
 ```markdown
-# Architecture Documentation - Notification & Audit Service
+# TaskBridge - Notification & Audit Service
 
-## 1. Service Relationship & Integration Contract
+## Overview
 
-The Project Service and Notification & Audit Service operate in a **synchronous integration pattern** where the Project Service acts as the orchestrator. When a project milestone changes (create/update/delete/reopen), the Project Service makes sequential calls to:
+TaskBridge is a B2B SaaS project collaboration platform for distributed engineering teams. This repository contains the **Notification & Audit Service** that sits alongside the existing Project Service, providing real-time notifications for project milestone changes and maintaining an immutable audit log of all state changes for compliance purposes.
 
-- **Audit Service** via `auditService.recordAudit()` - captures immutable before/after state snapshots with actor IP address
-- **Notification Service** via `notificationService.createNotification()` - dispatches real-time alerts to all team members
+### Key Features
 
-**Integration Contract:**
-- Audit calls are **synchronous and transactional** - if audit fails, the entire project operation rolls back
-- Notification calls are **synchronous but non-blocking** - failures are logged but don't rollback the transaction
-- Both services expose **REST APIs** for query operations (GET /audit, GET /notifications)
+- **Immutable Audit Logging** - Captures all project state changes with before/after snapshots
+- **Real-time Notifications** - Dispatches alerts to all team members on project updates
+- **Multi-tenant Isolation** - Strict data segregation between organisations
+- **Compliance Ready** - IP address capture, timestamped audit trails
+- **REST APIs** - Clean, well-documented endpoints for all operations
 
 ---
 
-## 2. Layered Architecture & Data Flow
+## Technology Stack
+
+### Core Technologies
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **Java** | 17 | Primary programming language (LTS) |
+| **Spring Boot** | 3.1.5 | Application framework and dependency injection |
+| **Spring Data JPA** | 3.1.5 | ORM and database abstraction |
+| **Hibernate** | 6.2.13 | JPA implementation |
+| **H2 Database** | 2.2.224 | Development database (in-memory) |
+| **PostgreSQL** | 15+ | Production database (planned) |
+
+### Testing & Quality
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **JUnit 5** | 5.10.0 | Unit testing framework |
+| **Mockito** | 5.5.0 | Mocking framework for tests |
+| **AssertJ** | 3.24.2 | Fluent assertions for tests |
+
+### Build & Deployment
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **Maven** | 3.9.0 | Build automation and dependency management |
+| **Docker** | Latest | Containerization (planned) |
+| **Git** | Latest | Version control |
+
+### Development Tools
+
+| Tool | Purpose |
+|------|---------|
+| **GitHub Copilot** | AI-assisted development |
+| **VS Code / IntelliJ IDEA** | IDE (preferred) |
+| **Postman** | API testing |
+| **H2 Console** | Database management |
+
+---
+
+## Project Structure
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         CLIENT / API CONSUMER                       │
-└─────────────────────────────┬───────────────────────────────────────┘
-                              │ HTTP Request
-                              ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                      CONTROLLER LAYER                              │
-│  • Request validation & header extraction (X-User-Id, X-Org-Id)   │
-│  • DTO mapping & response formatting                              │
-│  • Exception handling (404, 403, 400)                            │
-└─────────────────────────────┬───────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                       SERVICE LAYER                                │
-│  ┌─────────────────────────────────────────────────────────────┐   │
-│  │                    PROJECT SERVICE                           │   │
-│  │  • Business logic (create, update, delete)                 │   │
-│  │  • Multi-tenant validation (org access)                    │   │
-│  │  • Status transition validation                            │   │
-│  │  • Orchestrates audit & notification calls                │   │
-│  └──────────────┬──────────────┬───────────────────────────────┘   │
-│                 │              │                                    │
-│  ┌──────────────▼──────────────▼───────────────────────────────┐   │
-│  │              AUDIT SERVICE          NOTIFICATION SERVICE     │   │
-│  │  • Immutable audit entries       • Team member dispatch    │   │
-│  │  • JSON state snapshots          • Read/unread tracking    │   │
-│  │  • IP address capture            • User-based filtering    │   │
-│  │  • Query by date/event type      • Mark as read           │   │
-│  └─────────────────────────────────────────────────────────────┘   │
-└─────────────────────────────┬───────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                     REPOSITORY LAYER                               │
-│  • JPA repository interfaces                                       │
-│  • Multi-tenant filtering (organisationId in all queries)         │
-│  • Custom query methods for filtering (date, event type)          │
-│  • Transaction management                                          │
-└─────────────────────────────┬───────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                      DATABASE LAYER                                │
-│  • H2 Database (development) / PostgreSQL (production)            │
-│  • Tables: projects, audit_logs, notifications                   │
-│  • Immutability enforced at service level (no update/delete)     │
-│  • Indices for performance (organisationId, timestamp)           │
-└─────────────────────────────────────────────────────────────────────┘
+taskbridge/
+├── .github/
+│   └── copilot-instructions.md      # Copilot custom instructions
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── taskbridge/
+│   │   │           ├── project/
+│   │   │           │   ├── model/
+│   │   │           │   │   └── Project.java
+│   │   │           │   ├── repository/
+│   │   │           │   │   └── ProjectRepository.java
+│   │   │           │   ├── service/
+│   │   │           │   │   └── ProjectService.java
+│   │   │           │   └── controller/
+│   │   │           │       └── ProjectController.java
+│   │   │           ├── audit/
+│   │   │           │   ├── model/
+│   │   │           │   │   └── AuditLog.java
+│   │   │           │   ├── repository/
+│   │   │           │   │   └── AuditRepository.java
+│   │   │           │   ├── service/
+│   │   │           │   │   └── AuditService.java
+│   │   │           │   └── controller/
+│   │   │           │       └── AuditController.java
+│   │   │           ├── notification/
+│   │   │           │   ├── model/
+│   │   │           │   │   └── Notification.java
+│   │   │           │   ├── repository/
+│   │   │           │   │   └── NotificationRepository.java
+│   │   │           │   ├── service/
+│   │   │           │   │   └── NotificationService.java
+│   │   │           │   └── controller/
+│   │   │           │       └── NotificationController.java
+│   │   │           └── TaskBridgeApplication.java
+│   │   └── resources/
+│   │       └── application.properties
+│   └── test/
+│       └── java/
+│           └── com/
+│               └── taskbridge/
+│                   ├── audit/
+│                   │   └── AuditServiceTest.java
+│                   └── project/
+│                       └── ProjectServiceTest.java
+├── ARCHITECTURE.md                   # Architecture documentation
+├── IMPACT_ANALYSIS.md                # Scope change impact analysis
+├── PR_DESCRIPTION.md                 # Pull request description
+├── PROMPTS.md                         # Prompt engineering documentation
+├── README.md                          # This file
+├── REVIEW.md                          # Code review documentation
+├── SPEC.md                            # Technical specification
+├── TOOL_STRATEGY.md                   # Copilot tool strategy
+└── pom.xml                            # Maven build file
 ```
 
-**Complete Data Flow:**
-1. Client sends request to `POST /api/projects` with headers (X-User-Id, X-Organisation-Id, X-Forwarded-For)
-2. Controller validates headers and passes to ProjectService
-3. ProjectService validates business rules (org access, input validation)
-4. ProjectService saves the project and captures before/after state
-5. **Synchronous Transactional Flow:** ProjectService calls AuditService.recordAudit()
-   - AuditService serializes state to JSON
-   - AuditService creates immutable AuditLog entry with IP address
-   - AuditRepository saves the entry
-6. **Synchronous Non-Blocking Flow:** ProjectService calls NotificationService.createNotification()
-   - NotificationService fetches team members (placeholder for now)
-   - NotificationService creates Notification entries with read=false
-   - NotificationRepository saves all entries
-7. ProjectService returns success response to client
-8. Clients can query audit via `GET /api/audit/{projectId}` or notifications via `GET /api/notifications/unread`
+---
+
+## Architecture Overview
+
+This project follows a **multi-service layered architecture**:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   CONTROLLER LAYER                         │
+│         (Request/Response Handling & Validation)          │
+└─────────────────────────┬───────────────────────────────────┘
+                          │
+┌─────────────────────────▼───────────────────────────────────┐
+│                    SERVICE LAYER                           │
+│   ┌─────────────────────────────────────────────────────┐   │
+│   │          PROJECT SERVICE                           │   │
+│   │   • Business Logic                                 │   │
+│   │   • Orchestrates Audit & Notification              │   │
+│   └────────────┬──────────────────────────┬────────────┘   │
+│                │                          │                │
+│   ┌────────────▼──────────┐   ┌──────────▼────────────┐   │
+│   │   AUDIT SERVICE       │   │  NOTIFICATION SERVICE │   │
+│   │   • Immutable logging │   │   • Team notification │   │
+│   │   • JSON snapshots    │   │   • Read status       │   │
+│   └───────────────────────┘   └──────────────────────┘   │
+└─────────────────────────┬───────────────────────────────────┘
+                          │
+┌─────────────────────────▼───────────────────────────────────┐
+│                   REPOSITORY LAYER                         │
+│              (Data Access & Multi-tenant Filtering)        │
+└─────────────────────────┬───────────────────────────────────┘
+                          │
+┌─────────────────────────▼───────────────────────────────────┐
+│                   DATABASE LAYER                           │
+│              (H2 / PostgreSQL)                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Service Integration
+
+| Integration | Pattern | Description |
+|-------------|---------|-------------|
+| **Project → Audit** | Synchronous, Transactional | Audit failures rollback the project operation |
+| **Project → Notification** | Synchronous, Non-blocking | Notification failures are logged but don't rollback |
 
 ---
 
-## 3. Multi-Tenant B2B SaaS Appropriateness
+## Getting Started
 
-This architecture is specifically designed for multi-tenant B2B SaaS with the following considerations:
+### Prerequisites
 
-**Data Isolation:**
-- Every database query includes `organisationId` filter - no cross-tenant data leakage
-- Audit logs and notifications both store `organisationId` for tenant isolation
-- Users can only access their organisation's projects, audits, and notifications
+- Java 17 or higher
+- Maven 3.9+
+- Git
+- IDE (VS Code with Copilot extension recommended)
 
-**Compliance Ready:**
-- Immutable audit logs satisfy SOC2, GDPR, and compliance requirements
-- IP address capture provides security auditing for investigations
-- Before/after state snapshots enable complete audit trails
+### Installation
 
-**Scalability:**
-- Clear separation of concerns allows independent scaling of services
-- Query filtering at repository level (not in-memory) for performance
-- Indices on organisationId and timestamp for efficient queries
+1. **Clone the repository**
+```bash
+git clone https://github.com/taskbridge/taskbridge.git
+cd taskbridge
+```
 
-**Security:**
-- All endpoints require organisation context (headers)
-- Validation at multiple layers (controller, service, repository)
-- No raw SQL - ORM prevents injection attacks
+2. **Build the project**
+```bash
+mvn clean install
+```
 
----
+3. **Run the application**
+```bash
+mvn spring-boot:run
+```
 
-## 4. Key Design Decisions & Trade-offs
-
-### Decision 1: Synchronous vs Asynchronous Audit
-
-**Chosen:** Synchronous (audit happens in the same transaction as the project update)
-
-**Trade-off:**
-- ✅ **Pros:** Guaranteed audit consistency (no lost audit records), simple rollback, immediate feedback
-- ❌ **Cons:** Performance impact if audit database is slow, blocks the main operation
-
-**Alternative Considered:** Asynchronous (audit via message queue)
-
-**Why Chosen:** Compliance requires guaranteed audit records - cannot risk losing audit entries. The audit operation is fast enough (JSON serialization + INSERT) to not significantly impact performance.
+4. **Access the application**
+- API: `http://localhost:8080/api`
+- H2 Console: `http://localhost:8080/h2-console`
+  - JDBC URL: `jdbc:h2:mem:taskbridge`
+  - Username: `sa`
+  - Password: (empty)
 
 ---
 
-### Decision 2: Hardcoded Team Members vs User Service Integration
+## API Endpoints
 
-**Chosen:** Placeholder team members {1L, 2L, 3L} with TODO comment
+### Project Service
 
-**Trade-off:**
-- ✅ **Pros:** Quick implementation, works for demos, decoupled from User Service
-- ❌ **Cons:** Not production-ready, fails with real user IDs, technical debt
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/projects` | Create a new project |
+| PATCH | `/api/projects/{id}/status` | Update project status |
+| DELETE | `/api/projects/{id}` | Delete a project |
+| GET | `/api/projects/team/{orgId}` | Get all projects for a team |
 
-**Alternative Considered:** Integrate User Service immediately
+**Headers Required:**
+- `X-User-Id`: Current user ID
+- `X-Organisation-Id`: Organisation ID for multi-tenant isolation
+- `X-Forwarded-For`: Client IP address (for audit)
 
-**Why Chosen:** User Service isn't available yet - this service can be built independently. The TODO comment clearly marks the gap for future integration. This is a pragmatic trade-off that allows shipping the feature on time.
+### Audit Service
 
----
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/audit/{projectId}` | Get audit history with filters (from, to, eventType) |
 
-### Decision 3: Service-Level vs Database-Level Immutability
+### Notification Service
 
-**Chosen:** Service-level immutability (no update/delete methods in service layer)
-
-**Trade-off:**
-- ✅ **Pros:** Application logic controls mutability, easier to reason about, no database triggers needed
-- ❌ **Cons:** Could bypass via direct repository access (needs team discipline)
-
-**Alternative Considered:** Database triggers or constraints
-
-**Why Chosen:** Service-level immutability provides more flexibility and is easier to test. Repository access is only through service layer in production code, making this safe. Added documentation to enforce the rule.
-
----
-
-### Decision 4: Multi-Service vs Single Service Layout
-
-**Chosen:** Separate services (Project, Audit, Notification) within the same codebase
-
-**Trade-off:**
-- ✅ **Pros:** Clear separation of concerns, independent evolution, easier testing, modular
-- ❌ **Cons:** More files to manage, potential duplicate code, more complex navigation
-
-**Alternative Considered:** Single monolithic service
-
-**Why Chosen:** The separation aligns with the problem domain - each service has distinct responsibilities. This makes the codebase more maintainable and prepares for potential future microservices migration.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/notifications/unread` | Get all unread notifications |
+| PATCH | `/api/notifications/{id}/read` | Mark notification as read |
 
 ---
 
-### Decision 5: Synchronous Notifications
+## Testing
 
-**Chosen:** Notifications are sent synchronously within the request lifecycle
+### Run Tests
+```bash
+mvn test
+```
 
-**Trade-off:**
-- ✅ **Pros:** Simple implementation, immediate feedback, guaranteed delivery
-- ❌ **Cons:** Adds latency to the main operation, blocks the user's request
+### Test Coverage
+- 8 test cases implemented
+- Coverage: Unit tests for services, integration tests for controllers
+- Covers: Immutability, multi-tenant isolation, date filtering, event filtering
 
-**Alternative Considered:** Asynchronous notifications via message queue or @Async
-
-**Why Chosen:** For the current scale, synchronous is simpler and sufficient. The operation is fast (just database inserts). If performance becomes an issue, we can easily switch to @Async without changing the API contract.
-
----
-
-## 5. Technology Stack Summary
-
-| Layer | Technology | Purpose |
-|-------|------------|---------|
-| Language | Java 17 | Modern LTS version |
-| Framework | Spring Boot 3.1.x | REST APIs, dependency injection |
-| ORM | Spring Data JPA | Database abstraction |
-| Database | H2 (dev) / PostgreSQL (prod) | Data persistence |
-| Validation | Jakarta Validation | Input validation |
-| Logging | SLF4J + Logback | Structured logging |
-| JSON | Jackson | State snapshot serialization |
-| Testing | JUnit 5 + Mockito | Unit and integration tests |
-| Build | Maven | Dependency management |
+### Test Scenarios
+1. ✅ Notification dispatch to all team members
+2. ✅ Audit entry creation on project state change
+3. ✅ Audit immutability (cannot delete/overwrite)
+4. ✅ Audit history query by date range
+5. ✅ Audit history query by event type
+6. ✅ Unauthorised user access prevention
+7. ✅ IP address capture in audit logs
+8. ✅ REOPENED event triggers audit + notifications
 
 ---
 
-## 6. Deployment Considerations
+## Development with GitHub Copilot
 
-**Containerization:**
-- Each service can run in its own container
-- Shared database but independent schemas
+This project was built using GitHub Copilot with comprehensive prompt engineering. See documentation:
 
-**Scaling:**
-- Audit and Notification services can scale independently
-- Read replicas for audit query endpoints
+- **[PROMPTS.md](PROMPTS.md)** - Complete prompt chain and corrections
+- **[TOOL_STRATEGY.md](TOOL_STRATEGY.md)** - Copilot feature usage and scenarios
+- **[.github/copilot-instructions.md](.github/copilot-instructions.md)** - Custom Copilot rules
 
-**Monitoring:**
-- Structured logs for each service
-- Metrics for audit recording latency
-- Alerts for notification delivery failures
+### Copilot Features Used
+- ✅ Ask Mode (Chat)
+- ✅ Edit Mode
+- ✅ Agent Mode
+- ✅ @workspace
+- ✅ #file References
+- ✅ /explain Command
+- ✅ /tests Command
+- ✅ /doc Command
+- ✅ Inline Ghost Text
 
-**Backup & Recovery:**
-- Audit logs backed up daily (compliance requirement)
-- Immutable audit logs protect against data corruption
+### AI-Assisted Development Breakdown
+- **AI-Generated:** ~75% (models, repositories, controllers, tests scaffolding)
+- **Human-Written:** ~25% (security, validation, business logic, documentation)
 
 ---
 
-*Architecture Document Version: 1.0*
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [SPEC.md](SPEC.md) | Technical specification with data models and API contracts |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture and design decisions |
+| [REVIEW.md](REVIEW.md) | Code review of AI-generated Project Service |
+| [IMPACT_ANALYSIS.md](IMPACT_ANALYSIS.md) | Scope change impact analysis |
+| [PR_DESCRIPTION.md](PR_DESCRIPTION.md) | Pull request description |
+| [PROMPTS.md](PROMPTS.md) | Prompt engineering documentation |
+| [TOOL_STRATEGY.md](TOOL_STRATEGY.md) | Copilot tool strategy and reflection |
+
+---
+
+## Database Schema
+
+### Projects Table
+```sql
+CREATE TABLE projects (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    status VARCHAR(50) NOT NULL,
+    organisation_id BIGINT NOT NULL,
+    created_by BIGINT NOT NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+```
+
+### Audit Logs Table
+```sql
+CREATE TABLE audit_logs (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    event_type VARCHAR(50) NOT NULL,
+    entity_type VARCHAR(50) NOT NULL,
+    entity_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    organisation_id BIGINT NOT NULL,
+    previous_state TEXT,
+    new_state TEXT,
+    ip_address VARCHAR(45) NOT NULL,
+    timestamp TIMESTAMP NOT NULL
+);
+```
+
+### Notifications Table
+```sql
+CREATE TABLE notifications (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    organisation_id BIGINT NOT NULL,
+    event_type VARCHAR(50) NOT NULL,
+    project_id BIGINT NOT NULL,
+    message TEXT NOT NULL,
+    read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP NOT NULL
+);
+```
+
+---
+
+## Security Features
+
+- **Multi-tenant Isolation:** All queries filter by `organisationId`
+- **Input Validation:** All endpoints validate input data
+- **Audit Trail:** Every change is logged with actor and IP
+- **Immutable Audit Logs:** No updates or deletes allowed
+- **Secure Headers:** `X-User-Id`, `X-Organisation-Id` required
+
+---
+
+## Known Issues & Technical Debt
+
+| Issue | Priority | Status |
+|-------|----------|--------|
+| Team members hardcoded ({1L, 2L, 3L}) | High | TODO - Integrate User Service |
+| No pagination on audit queries | Medium | TODO - Add pagination |
+| No caching strategy | Medium | TODO - Implement caching |
+| IPv6 validation incomplete | Low | TODO - Add comprehensive validation |
+| Data retention policy not implemented | High | TODO - Add auto-deletion |
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Commit changes: `git commit -m "feat: your feature"`
+4. Push: `git push origin feature/your-feature`
+5. Open a Pull Request
+
+### Commit Convention
+Use Conventional Commits:
+- `feat:` New feature
+- `fix:` Bug fix
+- `docs:` Documentation
+- `test:` Testing
+- `refactor:` Code refactoring
+- `chore:` Maintenance
+
+---
+
+## License
+
+This project is proprietary and confidential. Unauthorized copying, distribution, or use is strictly prohibited.
+
+---
+
+## Contact
+
+- **Tech Lead:** [tech.lead@taskbridge.com](mailto:tech.lead@taskbridge.com)
+- **Product Team:** [product@taskbridge.com](mailto:product@taskbridge.com)
+- **Security Team:** [security@taskbridge.com](mailto:security@taskbridge.com)
+
+---
+
+## Acknowledgments
+
+- Built with ❤️ using GitHub Copilot
+- Special thanks to the product team for the requirements
+- Thanks to the security team for compliance guidance
+
+---
+
+## Quick Links
+
+- [API Documentation](#api-endpoints)
+- [Getting Started](#getting-started)
+- [Architecture](#architecture-overview)
+- [Testing](#testing)
+- [Development Guide](#development-with-github-copilot)
+
+---
+
 *Last Updated: 2026-07-17*
-*Architectural Decisions: 5 documented*
-*Technology Stack: 9 components*
+*Version: 1.0.0*
+*Status: Ready for Review*
 ```
 
-This ARCHITECTURE.md covers:
-- ✅ Service relationship and integration contract
-- ✅ Layered architecture with data flow diagram
-- ✅ Multi-tenant B2B SaaS appropriateness
-- ✅ 5 key design decisions with trade-offs
-- ✅ Technology stack summary
-- ✅ Deployment considerations
+This README.md provides:
+- ✅ Complete technology stack declaration
+- ✅ Project overview and key features
+- ✅ Architecture diagram and service integration
+- ✅ Getting started guide with prerequisites
+- ✅ API endpoint documentation
+- ✅ Testing information
+- ✅ Copilot development documentation links
+- ✅ Database schema
+- ✅ Security features
+- ✅ Known issues and technical debt
+- ✅ Contribution guidelines
+- ✅ Quick links for navigation
