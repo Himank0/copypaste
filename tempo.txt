@@ -1,1 +1,191 @@
-https://apc01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fexamlaunchpad.pearsonvue.com%2Fentry-point%2Flaunch-exam%2FANTHROPIC%2FOP%3FregistrationToken%3DJsUiwyFWxwkOt%252FoSl%252Bw8nt2FoidOIh4s8z7lW6%252F40CTadpI5GPzFXcrXqp06GRH3w1U7b5eRe%252B0GIJ%252B2smdjFu3ZiDuW2%252FRy4cf2R%252FOes4gJ%252BanhURnDqSywsma8B6cG3%252FD5xHwqjN4XfsiZOL2Jzw%253D%253D%26locale%3Den-US&data=05%7C02%7Chimank.kandpal%40cognizant.com%7C9be6bb0fc041481edd9908dee957dcbe%7Cde08c40719b9427d9fe8edf254300ca7%7C0%7C0%7C639204760834454390%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=cjzAQp32fn9gJXcUjeqUWW%2B0JMgcaIRwDI8VPFTWrfo%3D&reserved=0
+STEP 0 — Setup
+Codex app open karo (desktop)
+Apna project folder banao: fintrack-api/
+Codex app mein us folder ko open/connect karo
+
+📸 Screenshot 1: Folder structure + Codex app open dikhna chahiye (project ke saath)
+
+STEP 1 — AGENTS.md banao
+
+Prompt do:
+
+Create an AGENTS.md file at the repository root for a Java Spring Boot 
+fintech project. Include: tech stack (Java 17, Spring Boot, Spring Data JPA, 
+Maven), layered architecture rules (Model -> Repository -> Service -> Controller, 
+controllers must not call repositories directly), security rules (no raw SQL, 
+credentials from environment variables only, mandatory ownership checks on 
+user-owned data), and testing expectations.
+
+📸 Screenshot 2: AGENTS.md file generated + content visible in Codex app
+
+STEP 2 — Low-effort prompt (jaan-boojh kar buggy code banao)
+
+Prompt do (exactly yeh, bina modify kiye):
+
+Build a REST controller for a transactions feature in a Spring Boot app.
+Users can add, get, update and delete their transactions (amount, category,
+description). Connect directly to Postgres and make it work quickly.
+
+⚠️ Iska output bina modify kiye save karo — yeh jaan-boojh kar "bad code" hai jo aage review karne ke liye chahiye.
+
+📸 Screenshot 3: Prompt + Codex ka generated output (dono ek screenshot ya do alag mein)
+
+STEP 3 — Us code ko review karo
+
+Prompt do:
+
+Review this TransactionController.java file as a senior security engineer. 
+Identify every security, architecture, and correctness issue you can find — 
+SQL injection, authorization gaps, resource leaks, hardcoded credentials, 
+missing validation, error handling problems.
+
+Codex ka response padho, apna manual review bhi karo (jo Codex miss kare wo bhi note karo).
+
+📸 Screenshot 4: Yeh review prompt + Codex ka response (issues list)
+
+➡️ Ab ek table banao (Word doc mein) — minimum 8 issues, har ek ke liye: issue, severity, impact, fix.
+
+STEP 4 — Code ko sahi tareeke se rewrite karo
+
+Prompt do:
+
+Rewrite the Transaction module to production standards following AGENTS.md.
+Use proper layered architecture: JPA entity (model), Spring Data repository, 
+a service layer with ownership checks, and a thin controller. Use BigDecimal 
+for money, add input validation, structured logging, and proper exception 
+handling. Do not use raw JDBC.
+
+Codex diff dikhayega — usko carefully padho, accept karo.
+
+📸 Screenshot 5 (IMPORTANT — diff view wala): Codex app ka diff panel jahan tum changes accept kar rahe ho — yeh required hai rubric mein.
+
+STEP 5 — Naya feature banao: Expense Splitting
+
+Yeh 4-5 chhote prompts mein todo (decomposition technique):
+
+Prompt A (model banane ke liye):
+
+Add a SharedExpense JPA entity with: creatorUserId, description, totalAmount 
+(BigDecimal), a SplitType enum (EQUAL, CUSTOM), createdAt, and a one-to-many 
+list of ExpenseParticipant (userId, shareAmount). Follow the same conventions 
+as Transaction.java.
+
+Prompt B (calculation logic ke liye):
+
+Create a BalanceCalculationService with two methods: calculateShares(totalAmount, 
+splitType, participants) supporting EQUAL and CUSTOM splits, and 
+computeNetBalances(userId, expenses) that nets what a user owes/is owed. 
+No persistence or HTTP logic in this class.
+
+Prompt C (service + API endpoints ke liye — AGENTS.md reference zaroor karo):
+
+Following AGENTS.md, add ExpenseService (persistence, delegates math to 
+BalanceCalculationService) and ExpenseController with POST /api/v1/expenses 
+and GET /api/v1/expenses/balances. Controller must not call the repository 
+directly.
+
+Prompt D (tests ke liye — minimum 6):
+
+Write JUnit 5 tests for BalanceCalculationService and TransactionService. 
+Cover: equal split among 3 participants, custom split matching total, custom 
+split that doesn't sum correctly (should fail), net balance across two 
+expenses, single-participant expense (should fail), and unauthorized access 
+attempt (should fail).
+
+📸 Screenshot 6, 7, 8, 9: Har prompt ka + uska output/diff (kam se kam 2-3 screenshots is step ke)
+
+STEP 6 — Jab bhi Codex kuch galat kare
+
+Jaise agar Codex controller mein directly repository call kar de, ya rounding wrong kare:
+
+📸 Screenshot 10 (optional but good): Ek jagah dikhao jaha tumne Codex ka diff reject kiya ya usse dobara prompt diya sahi karne ke liye
+
+Yeh important hai kyunki rubric explicitly poochta hai "post-generation corrections."
+
+STEP 7 — Final steps (no more screenshots needed)
+
+Ye sab sirf likhna hai Word doc mein, Codex se nahi lena:
+
+PR description
+Peer review comments (3)
+Codex usage log (min 6 entries)
+Architecture summary
+Self-review checklist
+Total minimum screenshots: 6-10
+
+Sabse zaroori 4:
+
+Setup (folder + Codex + AGENTS.md)
+Bad code prompt + output
+Review prompt + issues found
+Diff view dikhana accept karte waqt (yeh miss mat karna)
+
+Baaki (expense feature ke prompts) jitna zyada capture karoge, utna better — kam se kam 2 different surfaces use karo (jaise Codex app + Codex CLI ek baar) taaki rubric ka "2+ surfaces" requirement bhi poora ho.
+
+mutliple surface pr kaise or kon kon se
+
+Codex ke 4 surfaces hote hain — tumhe rubric ke hisaab se kam se kam 2 different surfaces use karne hain. Yahan hai kaunse hain aur kaise use karna hai:
+
+1. Codex Web (chatgpt.com/codex)
+
+Kaise use karo:
+
+Browser mein chatgpt.com/codex open karo
+Apna GitHub repo connect karo (ya naya task start karo)
+Prompt likho, Codex cloud mein kaam karega, task complete hone pe diff dikhayega
+Best for: bade/complex prompts jahan pura file padhna ho accept karne se pehle
+
+📸 Screenshot mein dikhna chahiye: browser ka URL bar (chatgpt.com/codex) + prompt + response
+
+2. Codex App (Desktop app)
+
+Kaise use karo:
+
+Desktop app open karo (jo tum already use kar rahe ho)
+Project folder connect karo, prompt do
+Diff review panel mein changes dekh sakte ho accept/reject karne se pehle
+
+📸 Screenshot mein dikhna chahiye: App ka UI/window + prompt + diff panel
+
+3. Codex CLI (Terminal)
+
+Kaise use karo:
+
+Terminal open karo apne project folder mein
+Command:
+bash
+codex
+Fir terminal ke andar hi prompt type karo, jaise:
+bash
+codex exec "Add ExpenseService and ExpenseController following AGENTS.md. Controller must not call the repository directly."
+Changes dekhne ke liye:
+bash
+git diff
+
+ya codex ke andar /diff command use karo accept karne se pehle
+
+📸 Screenshot mein dikhna chahiye: terminal window (kaala/CLI screen) + tumhara command + Codex ka output
+
+4. Codex IDE Extension (VS Code / Cursor)
+
+Kaise use karo:
+
+VS Code (ya Cursor/Windsurf) open karo
+Codex extension install karo (Extensions marketplace se search karo "Codex")
+File open karo (jaise Transaction.java), side panel mein Codex chat khulega
+Wahin prompt do — file already context mein hai, inline diff preview milega
+
+📸 Screenshot mein dikhna chahiye: VS Code window (file open + side panel mein Codex chat/diff)
+
+Recommendation — kaunsa kab use karo (jo maine pehle document mein bhi likha):
+Kaam	Surface	Kyun
+AGENTS.md banana, bade file rewrites	Web ya App	Pura diff aaram se padh sakte ho
+Chhota fix, single file mein kaam	IDE Extension	File already open hai, context milta hai
+Repeatable/mechanical kaam (wiring layers)	CLI	Script jaisa, fast
+Simple plan tumhare liye:
+Codex App use karo — Section 1, 2, 3, 4 ke liye (jo tum already kar rahe ho)
+Codex CLI use karo — sirf ek prompt ke liye, jaise Expense Service/Controller wiring (Step 5, Prompt C) — terminal khol ke wahi prompt do
+
+Isse tumhare paas 2 surfaces ho jayenge screenshots mein, aur rubric ka requirement poora ho jayega. Baaki sab App se hi kar sakte ho.
+
+
