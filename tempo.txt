@@ -1,3 +1,26 @@
+Sir, this assessment basically checking — can I use AI coding tool properly, means OpenAI Codex. Not just make AI write code, but also review that code, find mistakes — that is real skill.
+
+Problem statement was — company need one feature for fintech app, expense splitting type feature. Like Splitwise app. Person add one expense, system automatically calculate who owe how much to whom.
+
+What I did — first I give AI some rules, coding standards type. Then I purposely make AI write quick, rushed code — like some developer in hurry writes. In that code I found 9 big problems. Most serious one — any user can see or delete other user data also. Password also written directly in code, which is very risky.
+
+After that I rewrite whole module properly, with proper security checks. Then I build new feature — expense splitting — calculation logic, APIs, and testing also, 7 test cases I wrote.
+
+I also did PR review — means like office mein hota hai na, we check teammate code, same way I checked my own code. Found 3 comments. One is negative amount issue. Second is performance issue — system loading all old data every time, can become slow. Third one most interesting — user identity coming from one header, which anyone can fake. This one AI itself could not catch — only human can catch this, because AI don't know how real system authentication works.
+
+Manually I fixed 3 things myself — one is rounding issue, when bill split between people, calculation was not consistent. Second, AI took one shortcut, controller was directly accessing database, breaking security rule — I reject that, made AI do again properly. Third, decimal number comparison was wrong, which is risky for money calculation.
+
+One limitation also I mentioned openly — right now system don't have settlement tracking, means even if person pay money, balance still show as pending. That is for future.
+
+So overall — feature is done, working, secure also. Most important thing — AI can make work faster, but every output need checking, cannot blindly trust, especially when money and security involved
+
+
+
+Short version (if time is less):
+
+"Basically I use AI to build expense-splitting feature. First I purposely made bad code, found security problems in it — like anyone can see other person data. Then I made proper version. In between, 3 times I manually fixed AI mistakes — rounding issue, one security shortcut, and number comparison issue. At end I did PR review on my own code, found one gap AI could not catch itself — user identity could be faked. Overall AI is helpful, but cannot blindly trust, review is must."
+
+
 STEP 0 — Setup
 Codex app open karo (desktop)
 Apna project folder banao: fintrack-api/
