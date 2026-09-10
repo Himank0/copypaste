@@ -1,164 +1,55 @@
-# Section 3 - "Advanced Search" left hand nav
+Phase 1 (Weeks 1-3) — Python + Data Libraries ka detailed breakdown, Java background ke context me:
 
-Includes Bulk Task Create, Bulk Task Update and access to Pending & Terminated Partners.
+## Week 1: Python Core (Java se mapping karke seekho)
 
-## Key Functionality Table
+**Syntax basics (fast jaayega, bas Java se difference note karo):**
+- Variables, data types (Java me explicit typing hai, Python dynamic — ye mindset shift important hai)
+- Indentation-based blocks (no `{}`, no semicolons)
+- `if/elif/else`, loops (`for`, `while`)
+- Functions — `def`, default args, `*args`, `**kwargs` (Java overloading jaisa nahi hai, ye naya concept hai)
 
-| Item | Key CMD Functions | Purpose | Still Required? | Used in reporting / extracts? | Used in contract preparation? | Relevance to "Read Only" Users? |
-|---|---|---|---|---|---|---|
-| 1 | **Search box 1** – located at top right-hand corner of the page | Returns a Dealer Record (or list of Dealer Records) meeting the search criteria (Name, ABN, suburb etc). This search box will only search through Dealer Records at "Active" status – for this reason it is superfluous to requirements | No | N/A | N/A | Relevant (but there is a better search option – item 2 – on the same page) |
-| 2 | **Search box 2** – located next to the right of the words "Keyword Search". Users have the option to search by: Dealer (2a); Document (2b); or Task (2c) | Returns a Dealer Record (or list of Dealer Records) which meet the search criteria: Name, ABN, suburb, Dealer Code etc for Dealer Search; part of Document Name for Document Search; or part of Task Name for Task Search. Defaults to Dealer Records at "Active" status – by clicking the New Dealers (Pending) and/or Terminated radio boxes, a User can see records at "Pending" and "De-commissioned (Terminated)" status. Users access Dealer Records via the "Open" button next to the Dealer Name | Yes | N/A | N/A | Relevant |
-| 2a | **Dealer Search** – looking for a specific Partner | Identifies whether the Partner being searched is or was part of the Partner Channel. Examples: active Partner "Solve Communications", pending Partner "Mobile Connect Sunnybank Hills", de-commissioned Partner "Crazy Mobiles Pty Ltd" | Yes | N/A | N/A | Relevant |
-| 2a | **Dealer Search** – looking for all Partners in a Channel Type | Provides Partner Channel information that supports internal Channel stakeholders. Example: a list of all Partners in the T-Partner LOTE channel | Yes | N/A | N/A | Relevant |
-| 2a | **Dealer Search** – looking for all Active Partners in a particular State (location) | Provides Partner Channel information that supports internal Channel stakeholders. Example: a list of all active Partners in NSW | Yes | N/A | N/A | Relevant |
-| 2a | **Dealer Search** – looking for all Pending or De-Commissioned Partners in a particular State (location) | Provides Partner Channel information that supports internal Channel stakeholders. Example: a list of all pending or de-commissioned Partners in NSW | Yes | N/A | N/A | Relevant |
-| 2b | **Document Search** – looking for all contract documents logged against a specific Partner (active, pending, superseded, terminated or aborted) | Identifies all contract documents under the Dealer Record for the selected Partner. Example: all contract documents held by Partner "JB Hi-Fi". Note: this information is also accessible in the Documents Tab of each Dealer Record | Yes (but is provided elsewhere) | N/A | N/A | Relevant |
-| 2b | **Document Search** – using drop down selections against Document Name, Module, Document Version, Document Status & Document Type fields | Identifies all Partners who have the selected Document Name under their Dealer Record. Document Status can filter on active/terminated/aborted/pending, or select N/A to display all. Example: all Partners with Pay TV Service Details | Yes | N/A | N/A | Relevant |
-| 2b | **Document Search** – Super User Bulk Update Document Status | Allows a Super User to update Document Status for a selected Document for multiple Partners. A single Document Version must be selected (i.e. not N/A) and Document Status set to Active. Example: all Partners with Pay TV Service Details version VR1 at Active status | Yes | N/A | N/A | Relevant |
-| 2c | **Task Search** – looking for all Partners who have been issued a specific Task (can be restricted by Task Status) | Identifies all Partners who have been issued a specific Task. Example: all Partners who received the "Create & issue Directors Deed of Guarantee & Indemnity VN2 (Non Standard)" task | Yes | N/A | N/A | Relevant |
-| 2c | **Task Search** – All Tasks issued to a specific Partner (can restrict to Task Type, Task Status and/or Contracts Team task owner "Assigned To") | Allows a User to search on Tasks issued to a given Partner and narrow search parameters as required. Example: Tasks issued to Partner "Conrade Pty Ltd" | Yes | N/A | N/A | Relevant |
-| 3a | **Super User function** – Terminate Partner/s from Keyword Search query | Allows a Super User to enter name, ABN, Dealer Code, Dealer Ref etc into the Keyword Search field, tick the checkbox for the Partner/s to terminate, then de-commission via the Terminate button. The Date Select field allows immediate (same day) or future-dated termination | Yes | N/A | N/A | Relevant |
-| 3b | **Super User function** – Terminate single or multiple Partners from Advanced Search page | Allows a Super User to select "Dealer Ref #" from the Code Type drop down, enter the relevant Dealer Ref Numbers in the Codes field and click Search to list those Partners in Search Results, from where they can be de-commissioned (terminated) | Yes | N/A | N/A | Relevant |
-| 4a | **SD Code Search Field** | Allows a User to search on a 4 digit Super Distributor Code | No | N/A | N/A | Not Relevant |
-| 4b | **Dealer Code Search Field** | Allows a User to search on a 5 digit Dealer Code | No | N/A | N/A | Not Relevant |
-| 4c | **Premise Code Search Field** | Allows a User to search on a 4 digit Premise Code | No | N/A | N/A | Not Relevant |
-| 4d | **Account Manager Dropdown Field** | Allows a User to search on an Account Manager | No | N/A | N/A | Not Relevant |
-| 4e | **Business Unit Check Boxes** | Allows a User to search on Partners within a Business Unit | No | N/A | N/A | Not Relevant |
-| 4f | **Dealer Under Negotiation Check Box** | Allows a User to view all Pending Partners | No | N/A | N/A | Not Relevant |
+**Data structures (Java collections ka Python equivalent):**
+- List (~ ArrayList), Tuple (immutable list), Dict (~ HashMap), Set (~ HashSet)
+- List comprehensions — `[x*2 for x in list]` — ye Java me nahi hota, isko achhe se practice karo, AI code me har jagah milega
+- Slicing (`list[1:5]`) — naya concept, important hai
 
-## Supporting Notes
+**OOP in Python (concepts same hain Java se, syntax alag):**
+- Classes, `__init__` (~ constructor), self (~ this)
+- Inheritance, `super()`
+- Dunder/magic methods (`__str__`, `__repr__`) — basic samajh lo
 
-### Dealer Search (Active / Pending / De-commissioned)
+**Error handling:**
+- `try/except/finally` (Java ke try-catch jaisa hi, bas syntax alag)
 
-- Users can open the Dealer Record via the **Open** button.
-- Users can obtain a CSV extract of basic Partner details, via the **Export Search Results** button.
-- Super Users, by clicking the radio button to the left of the Dealer Name, can initiate a new Task for the Partner via the **Batch Initiate Task** button.
-- Super Users, by clicking the radio button to the left of the Dealer Name, can terminate (de-commission) the Partner via the **Terminate** button.
+## Week 2: Python Ecosystem Essentials
 
-### Dealer Search (Channel Type / State)
+- Virtual environments — `venv` ya `conda` (Java ke Maven/Gradle dependency isolation jaisa concept)
+- `pip` aur `requirements.txt` (~ pom.xml/build.gradle)
+- File handling (read/write CSV, JSON)
+- Working with APIs — `requests` library (REST calls karna, JSON parse karna — ye tumhe already easy lagega)
+- Lambda functions, `map()`, `filter()` — functional style, Java streams jaisa
 
-- Users can open individual Dealer Records via the **Open** button.
-- Users can obtain a CSV extract of basic Partner details, via the **Export Search Results** button.
-- Super Users can initiate a new Task for any of the listed Partners, via the **Batch Initiate Task** button.
-- Super Users can terminate (de-commission) any of the listed Partners, via the **Terminate** button.
+## Week 3: NumPy + Pandas (AI/ML ka data backbone)
 
-### Document Search
+**NumPy:**
+- Arrays (1D, 2D) — kyun list se better hain (vectorized operations)
+- Array indexing, slicing, reshaping
+- Basic math operations (element-wise ops, broadcasting concept)
+- `mean`, `sum`, `std` jaise aggregate functions
 
-- Users can open the Dealer Record via the **Open** button.
-- Users can obtain a CSV extract of all contract documents held by the Partner (including lifecycle status), via the **Export Search Results** button.
-- For bulk update: Super Users, by clicking radio button/s to the left of the Dealer Name, can supersede or terminate the document for the tagged Partners using the **Supersede** or **Terminate** buttons.
+**Pandas (ye sabse zyada use hoga):**
+- Series aur DataFrame — inko samjho jaise SQL table ka Python version
+- Reading data — `read_csv()`, `read_json()`
+- Filtering rows, selecting columns (`df[condition]`, `df.loc`, `df.iloc`)
+- `groupby()`, aggregations — SQL GROUP BY jaisa hi hai
+- Handling missing data — `dropna()`, `fillna()`
+- Merging/joining dataframes — SQL joins jaisa
 
-### Task Search
+**Skip karo (abhi ke liye):**
+- ❌ Multithreading/async Python (backend me kaafi different hai Java se, but AI work me abhi zarurat nahi)
+- ❌ Advanced decorators, metaclasses (deep Python internals — waste of time abhi)
+- ❌ Django/Flask (FastAPI seedha seekhoge Phase 3 me)
 
-- Users can open the Dealer Record via the **Open** button.
-- Users can obtain a CSV extract of all Partners with the defined Task (including current Task Status), or all Tasks issued to a Partner (with Document, Module, Version details), via the **Export Search Results** button.
-- Super Users can update the Task Status for tagged Partners using the **Batch Manage Task** button (except Tasks at Filed (Complete) status).
+**Practice tip:** Jab bhi koi concept seekho, ek chhota script likho jo real CSV file pe kaam kare (e.g., ek sample sales data lo, Pandas se filter/group karo). Passive video-dekhna se code likhna zyada retain hoga.
 
-### Super User – Partner Termination (Immediate)
-
-- Super Users can de-commission (terminate) a Partner immediately by ticking the check button/s to the left of the Dealer Name, selecting the current date in the **Date Select** field and clicking **Terminate**.
-- A prompt confirms the intent to terminate. On acknowledgement, the Partner moves from Active status to De-Commissioned (Terminated) status.
-- The same Dealer Record can return to Pending status if a new task is allocated and the related executable contract document is awaiting signature. Once signed, the Partner moves from Pending back to Active.
-
-### Super User – Partner Termination (Future Date)
-
-- Super Users can de-commission a Partner at a future date by ticking the check button/s, selecting a future date in the **Date Select** field and clicking **Terminate**.
-- A prompt confirms the intent. On acknowledgement, the Dealer Record is updated to reflect the pending termination for the Record and all documents contained therein. All "active" documents for the Partner are shaded **red** as a visual indicator of a pending termination.
-- Once the future termination date arrives, the Partner is automatically moved from Active status to De-Commissioned (Terminated) status.
-- The same Dealer Record can return to Pending status if a new task is allocated and the related executable contract document is awaiting signature.
-
-### Super User – Termination via Code Type & Codes Fields
-
-- Super Users can terminate immediately or at a future date by ticking check button/s to the left of the Dealer Name, choosing the date in the **Date Select** field and clicking **Terminate**.
-- **Immediate termination:** a confirmation prompt is shown; on acknowledgement the Partner moves from Active to De-Commissioned (Terminated).
-- **Future date termination:** a confirmation prompt is shown; on acknowledgement the Dealer Record reflects the pending termination and all "active" documents are shaded red. On the termination date the Partner automatically moves to De-Commissioned (Terminated).
-- The same Dealer Record can return to Pending status if a new task is allocated and the related executable contract document is awaiting signature.
-
-### Search Fields Not Required (4a–4f)
-
-- **SD Code, Dealer Code, Premise Code** – not required, as the Keyword Search field covers these criteria.
-- **Account Manager dropdown** – not required.
-- **Business Unit check boxes** – not required.
-- **Dealer Under Negotiation check box** – not required, as the existing New Dealers (Pending) check box covers this criterion.
-
----
-
-## Field Inventory – Advanced Search
-
-> **Note on columns:** The `Field Type` column has been verified against a screenshot of the live Advanced Search screen. The `Datasource`, `Business Validation` and `Static / API Source` columns are **derived** from the behaviour described in the source document, which does not specify data sources, validation rules or whether values are statically configured versus API-driven — they are a starting point for design review and should be confirmed against the CMD data model before being treated as authoritative.
-
-### 1. Global & Keyword Search Fields
-
-| Field Name | Field Type | Datasource | Business Validation | Static / API Source |
-|---|---|---|---|---|
-| Search box 1 (top right-hand corner) | Text field | Dealer Record master data (Active status only) | Free text; matches Name, ABN, suburb. Restricted to Dealer Records at "Active" status | API – dealer search query |
-| Keyword Search (Search box 2) | Text field | Dealer / Document / Task indexes depending on selected search mode | Free text. Matches Name, ABN, suburb, Dealer Code, Dealer Ref for Dealer mode; partial Document Name for Document mode; partial Task Name for Task mode | API – keyword search query |
-| Search Type selector (Dealer / Document / Task) | Dropdown | Fixed enumeration | Exactly one mode must be selected; drives which result columns and filters are shown. Defaults to Dealer | Static – hard-coded list of 3 values |
-| New Dealers (Pending) check box | Checkbox | Dealer Record status flag | Optional. When ticked, includes Dealer Records at "Pending" status in results | Static toggle applied as an API filter |
-| Terminated check box | Checkbox | Dealer Record status flag | Optional. When ticked, includes Dealer Records at "De-commissioned (Terminated)" status in results | Static toggle applied as an API filter |
-| Dealer Under Negotiation check box | Checkbox | Dealer Record status flag | Optional. Returns all Pending Partners. **Redundant** – duplicated by the New Dealers (Pending) check box | Static toggle applied as an API filter |
-
-### 2. Code Search Fields
-
-| Field Name | Field Type | Datasource | Business Validation | Static / API Source |
-|---|---|---|---|---|
-| SD Code | Text field | Super Distributor Code held on the Dealer Record (sourced from Commissions team) | Numeric, exactly 4 digits. **Redundant** – covered by Keyword Search | API – dealer search query |
-| Dealer Code | Text field | Dealer Code held on the Dealer Record (sourced from Commissions team) | Numeric, exactly 5 digits. **Redundant** – covered by Keyword Search | API – dealer search query |
-| Premise Code | Text field | Premise Code held on the Dealer Record (sourced from Commissions team) | Numeric, exactly 4 digits. **Redundant** – covered by Keyword Search | API – dealer search query |
-| Code Type | Dropdown | Fixed enumeration of code categories (e.g. "Dealer Ref #") | Defaults to "Select existing". One value must be selected before the Codes field is used; determines how Codes values are interpreted | Static – configured drop down list |
-| Codes | Textarea (multi-line, multi-value) | User-entered list of identifiers, resolved against Dealer Records | Accepts one or more codes matching the selected Code Type. Values must resolve to existing Dealer Records to appear in Search Results | API – bulk lookup by code |
-
-### 3. Dealer Attribute Filters
-
-| Field Name | Field Type | Datasource | Business Validation | Static / API Source |
-|---|---|---|---|---|
-| Channel | Dropdown | Dealer Type / Channel reference data (e.g. T-Partner LOTE) | Single selection; defaults to N/A. Returns all Partners in the chosen channel | API – reference data lookup |
-| State | Dropdown | State held against the Partner's principal business address | Single selection; defaults to N/A. Combines with status check boxes to scope Active vs Pending/De-Commissioned | Static list of states; applied as an API filter |
-| Account Manager | Dropdown | Account Manager register in Manage Account Managers | Single selection; defaults to "Any". **Not required** – register is not maintained, as Channels keep their own Account Manager records | API – Account Manager reference data |
-| Business Unit (TB / TEG / TCCW) | Checkbox group (3 checkboxes) | Business Unit reference data | Zero or more may be ticked. **Not required** | Static – three fixed check boxes |
-
-### 4. Document Search Fields
-
-| Field Name | Field Type | Datasource | Business Validation | Static / API Source |
-|---|---|---|---|---|
-| Document Name | Dropdown (full width) | Documents created and held in Admin → Manage Documents | Single selection; defaults to N/A. Returns all Partners holding that Document under their Dealer Record | API – document reference data |
-| Module | Dropdown (full width) | Modules created and held in Admin → Manage Modules | Single selection; defaults to N/A. Constrains the Document Name and Version lists to that Module | API – module reference data |
-| Document Version | Dropdown | Version numbers held against the selected Document | Single selection, or N/A for all versions. **Must be a specific version (not N/A) to enable Super User bulk update** | API – version list for selected Document |
-| Document Status | Dropdown | Document lifecycle status | Filters on Active, Pending, Superseded, Terminated or Aborted; N/A returns all statuses. **Must be set to Active to enable Super User bulk update** | Static – fixed lifecycle status list |
-| Document Type | Dropdown | Document Type reference data | Single selection; defaults to N/A. Used to refine document results | Static / API – configured document type list |
-
-### 5. Task Search Fields
-
-| Field Name | Field Type | Datasource | Business Validation | Static / API Source |
-|---|---|---|---|---|
-| Task Definition | Dropdown (full width) | Task Definitions held in Admin → Manage Task Definitions | Single selection; defaults to N/A. Returns all Partners issued that Task | API – task definition reference data |
-| Task Status | Dropdown | Task Statuses held in Admin → Manage (Task) Status | Optional; defaults to N/A (all statuses). Tasks at "Filed (Complete)" status cannot be bulk updated | API – task status reference data |
-| Assigned to | Dropdown | CMD User register (Super Users / Contracts Team) | Optional; defaults to N/A. Restricts results to Tasks owned by that Contracts Team member | API – user reference data |
-
-> **Not present on this screen:** *Task Type*, *Task Requester* and *Date Range* were listed in an earlier draft but do not appear on the Advanced Search page. Task Requester and Date Range belong to the **Task Wizard** screen (Section 5 of the source document).
-
-### 6. Search Results & Termination Controls
-
-| Field Name | Field Type | Datasource | Business Validation | Static / API Source |
-|---|---|---|---|---|
-| "All" select-all check box (results header) | Checkbox | Current Search Results set | Ticks/unticks every row in the current result page | Derived from search result rows |
-| Dealer selection check box (per result row) | Checkbox | Current Search Results set | One or more Partners must be selected before Terminate, Supersede, Delete, Batch Initiate Task or Batch Manage Task can be actioned | Derived from search result rows |
-| Display (results per page) | Dropdown | Fixed enumeration of page sizes | Defaults to 10. Controls how many result rows are shown | Static – configured page-size list |
-| Date Select (termination date) | Text field (date entry, in action bar) | User-entered date | Current date = immediate termination; a future date = pending termination. Past dates are not valid. On confirmation the Partner moves from Active to De-Commissioned (Terminated); future-dated records display all "active" documents shaded red until the date arrives | User input – submitted to termination API |
-
-### 7. Actions / Buttons
-
-| Action | Field Type | Datasource | Business Validation | Static / API Source |
-|---|---|---|---|---|
-| Go (top right, next to global search) | Button | Global search text field | Submits the top right-hand corner search | API – dealer search query |
-| Search | Button | Current filter selections | Executes the query using the entered criteria | API – search endpoint |
-| Open | Button (per result row) | Selected Dealer Record | Opens the Dealer Record (or the relevant Document/Task tab). Users may only view one Dealer Record at a time | Navigation – API record fetch |
-| Batch Manage Task | Button (disabled until rows selected) | Selected Partner/s | Super User only. Updates Task Status for tagged Partners, except Tasks at "Filed (Complete)" status | API – bulk task update |
-| Export Search Results | Button | Current Search Results set | Produces a CSV extract; for the Document Wizard the User first selects which fields to include. File downloads to the User's Downloads folder | API – export endpoint |
-| Batch Initiate Task | Button | Selected Partner/s | Super User only. Creates a new Task for each selected Partner | API – bulk task create |
-| Delete | Button (disabled until rows selected) | Selected Partner/s | Super User only. Removes the selected record/s | API – delete endpoint |
-| Supersede | Button | Selected Partner/s + specific Document Version | Super User only. Requires a specific Document Version and Document Status = Active | API – bulk document update |
-| Terminate | Button | Selected Partner/s + Date Select value | Super User only. Confirmation prompt required. A terminated Dealer Record can return to Pending status if a new task is allocated and the executable contract document is awaiting signature | API – termination endpoint |
-| Undo | Button (disabled until applicable) | Last actioned change | Reverses the preceding action | API – undo endpoint |
-| Result paging arrows (◄ ►) | Button (pair) | Current Search Results set | Moves between pages of results, in line with the Display page size | Client-side / API paging |
-| `<< Bottom` / `<< Top` | Hyperlink | Page anchors | Jumps to the bottom or top of the results page | Static – in-page anchor |
+Phase 2 ke liye jab ready ho, batao.
