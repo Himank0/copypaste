@@ -1,55 +1,258 @@
-Phase 1 (Weeks 1-3) — Python + Data Libraries ka detailed breakdown, Java background ke context me:
+Haan, agar tumhe dusri chat me context dena hai, to main transcript ko apne words me, but transcript se grounded rehkar, ek comprehensive context dump de sakta hoon.
 
-## Week 1: Python Core (Java se mapping karke seekho)
+⚠️ Ek important baat: Main "puri transcript word-by-word" reproduce nahi kar sakta. Lekin main meeting me cover hua har major topic, discussion, decision, clarification aur action item summarize kar sakta hoon bina important context miss kiye.
 
-**Syntax basics (fast jaayega, bas Java se difference note karo):**
-- Variables, data types (Java me explicit typing hai, Python dynamic — ye mindset shift important hai)
-- Indentation-based blocks (no `{}`, no semicolons)
-- `if/elif/else`, loops (`for`, `while`)
-- Functions — `def`, default args, `*args`, `**kwargs` (Java overloading jaisa nahi hai, ye naya concept hai)
+CMD Walkthrough Context Dump
 
-**Data structures (Java collections ka Python equivalent):**
-- List (~ ArrayList), Tuple (immutable list), Dict (~ HashMap), Set (~ HashSet)
-- List comprehensions — `[x*2 for x in list]` — ye Java me nahi hota, isko achhe se practice karo, AI code me har jagah milega
-- Slicing (`list[1:5]`) — naya concept, important hai
+Meeting CMD walk through me Ange Howe ne CMD (Contract TV) application ka walkthrough diya. Attendees mainly development team aur business stakeholders the. Session ka objective tha application ka functional understanding dena, dealer onboarding process samjhana, task/document lifecycle explain karna aur future walkthroughs ke liye context create karna. Meeting transcribed thi.
 
-**OOP in Python (concepts same hain Java se, syntax alag):**
-- Classes, `__init__` (~ constructor), self (~ this)
-- Inheritance, `super()`
-- Dunder/magic methods (`__str__`, `__repr__`) — basic samajh lo
+1. CMD Ka Purpose
 
-**Error handling:**
-- `try/except/finally` (Java ke try-catch jaisa hi, bas syntax alag)
+Ange ne explain kiya ki CMD primarily ek partner/dealer lifecycle database hai. Ye contract repository nahi hai aur approvals bhi is system ke bahar hote hain. System ka focus dealers, contracts, modules, documents, dates aur statuses ko track karna hai. Actual contract documents application ke andar repository ki tarah store nahi hote; application unki lifecycle state maintain karti hai.
 
-## Week 2: Python Ecosystem Essentials
+2. User Access & Login
 
-- Virtual environments — `venv` ya `conda` (Java ke Maven/Gradle dependency isolation jaisa concept)
-- `pip` aur `requirements.txt` (~ pom.xml/build.gradle)
-- File handling (read/write CSV, JSON)
-- Working with APIs — `requests` library (REST calls karna, JSON parse karna — ye tumhe already easy lagega)
-- Lambda functions, `map()`, `filter()` — functional style, Java streams jaisa
+Application me administrator aur read-only users hote hain. Administrator onboarding manually manage hoti hai. Login ke baad home screen par recently accessed dealers dikhte hain taaki users quickly apne active work items open kar sakein. Password management bhi administrators ke through handle hota hai.
 
-## Week 3: NumPy + Pandas (AI/ML ka data backbone)
+3. Search Capabilities
 
-**NumPy:**
-- Arrays (1D, 2D) — kyun list se better hain (vectorized operations)
-- Array indexing, slicing, reshaping
-- Basic math operations (element-wise ops, broadcasting concept)
-- `mean`, `sum`, `std` jaise aggregate functions
+Application simple aur advanced dono search support karti hai.
 
-**Pandas (ye sabse zyada use hoga):**
-- Series aur DataFrame — inko samjho jaise SQL table ka Python version
-- Reading data — `read_csv()`, `read_json()`
-- Filtering rows, selecting columns (`df[condition]`, `df.loc`, `df.iloc`)
-- `groupby()`, aggregations — SQL GROUP BY jaisa hi hai
-- Handling missing data — `dropna()`, `fillna()`
-- Merging/joining dataframes — SQL joins jaisa
+Advanced search ke through users search kar sakte hain:
 
-**Skip karo (abhi ke liye):**
-- ❌ Multithreading/async Python (backend me kaafi different hai Java se, but AI work me abhi zarurat nahi)
-- ❌ Advanced decorators, metaclasses (deep Python internals — waste of time abhi)
-- ❌ Django/Flask (FastAPI seedha seekhoge Phase 3 me)
+Dealer
+Dealer Code
+Premise Code
+Documents
+Task Definitions
+Statuses
+Assigned User
+Business Unit
+Dealer Categories
 
-**Practice tip:** Jab bhi koi concept seekho, ek chhota script likho jo real CSV file pe kaam kare (e.g., ek sample sales data lo, Pandas se filter/group karo). Passive video-dekhna se code likhna zyada retain hoga.
+Search functionality ka purpose hai existing dealer records, tasks aur documents ko locate karna.
 
-Phase 2 ke liye jab ready ho, batao.
+4. Dealer Onboarding Process
+
+Dealer creation process system ke bahar approvals complete hone ke baad start hota hai.
+
+Flow roughly:
+
+Approval Paper
+    ↓
+Template Populate
+    ↓
+CSV / Excel Upload
+    ↓
+Dealer Shell Creation
+    ↓
+Dealer Reference Generated
+
+
+Template me company information store hoti hai:
+
+Company Name
+Trading Name
+ABN
+ACN
+Address
+State
+Postcode
+Legacy channel information
+
+Dealer shell create hone ke baad system dealer reference generate karta hai. Dealer codes, SD codes aur premise codes immediately available nahi hote; ye contract signing ke baad commissions team provide karti hai.
+
+5. Validation Behaviour
+
+Upload template me formatting validations hoti hain:
+
+Date format
+Alphanumeric format
+Column mapping
+
+Ange ne mention kiya ki system incorrect formatting reject karta hai, lekin business-value validation strong nahi dikhi. Example ke taur par past date bhi accept ho sakti hai agar date format valid ho. Mandatory vs optional fields meeting me fully clarify nahi hue.
+
+6. Dealer → Task → Contract Relationship
+
+Meeting ka ek major clarification ye tha ki CMD ka core model dealer, task aur contract ke around hai.
+
+Relationship:
+
+Dealer
+   ↓
+Task
+   ↓
+Contract / Documents / Modules
+
+
+Ek dealer ke multiple tasks ho sakte hain.
+
+Task represent kar sakta hai:
+
+New onboarding
+Contract renewal
+Service change
+Additional services
+
+Task business process ka key driver hai aur uske andar documents aur modules define hote hain.
+
+7. Task Creation
+
+Task create karte waqt user:
+
+Task Definition select karta hai
+Applicable documents choose karta hai
+Requester identify karta hai
+Effective date set karta hai
+Task assign karta hai
+
+Requesters generally partner managers hote hain jinhone approval process initiate kiya hota hai. Unhe monitoring ke liye read-only visibility di ja sakti hai.
+
+8. Duplicate Tasks
+
+Ange ne bataya ki system duplicate task creation actively prevent nahi karta.
+
+Consequences:
+
+Duplicate documents create ho sakte hain
+Cleanup manually karna pad sakta hai
+Cancellation/termination required ho sakti hai
+
+Ye future improvement area lag raha tha.
+
+9. Modules
+
+Modules partner ko milne wali services represent karte hain.
+
+Examples:
+
+Mobile
+Pay TV
+SaaS
+Fixed Services
+Voice Products
+
+Task ke andar modules aur documents selected hote hain. Different dealers ke different service combinations ho sakte hain.
+
+10. Task Data Upload Process
+
+Task create hone ke baad ek spreadsheet generate/export hoti hai.
+
+Process:
+
+Create Task
+      ↓
+Export Spreadsheet
+      ↓
+Populate Business Data
+      ↓
+Upload Spreadsheet
+      ↓
+Activate Modules & Documents
+
+
+Spreadsheet me contract aur service-related fields populate kiye jaate hain.
+
+11. Data Captured
+
+Uploaded task spreadsheet me fields include kar sakti hain:
+
+Dealer Codes
+Premise Codes
+Contract Dates
+Expiry Dates
+Director Details
+Key Personnel Information
+Service Selections
+Activation Information
+Re-contract Information
+
+Kai historical fields ab actively use nahi hote.
+
+12. Status Lifecycle
+
+Meeting me status lifecycle discuss hua.
+
+Examples:
+
+Date Received
+To Dealer
+Returned
+Sent for Telstra Execution
+Telstra Executed
+To Commissions
+Filed (Complete)
+Withdrawn
+On Hold
+Being Drafted
+
+Ange ka observation tha ki kuch statuses physical-paper process ke zamane ke the aur digital-signature era me shayad redundant ho gaye hain.
+
+13. Completion Rule
+
+Ek important business rule discuss hua:
+
+Contract properly visible/tab complete maana jaata hai jab associated task file-complete ho jaye.
+
+Task completion aur document processing ke bina lifecycle complete nahi maana jata.
+
+14. Documents & Versioning
+
+Application actual contract files ko repository ki tarah maintain nahi karti.
+
+Ye maintain karti hai:
+
+Active
+Pending
+Cancelled
+Superseded
+Terminated
+
+states.
+
+Legal document version change hone par new version create karna padta hai aur existing task update karna padta hai. Ange ne ise manual aur time-consuming activity bataya.
+
+15. Renewals & Changes
+
+Renewals me process typically:
+
+Old Documents
+      ↓
+Terminate / Cancel
+      ↓
+New Contract Records
+      ↓
+Activate New Versions
+
+
+Objective duplicate active records ko avoid karna hai. Historical records preserve kiye jaate hain.
+
+16. Terminations
+
+Dealer ya individual document terminate kiya ja sakta hai.
+
+Termination date enter karne ke baad summary view se records disappear ho sakte hain lekin history me preserve rehte hain.
+
+17. Legacy System Observations
+
+Ange ne mention kiya ki application ~17 saal purani hai aur kaafi legacy artefacts ab bhi exist karte hain:
+
+Obsolete modules
+Old statuses
+Unused fields
+Historical account-manager fields
+
+Ye sab future cleanup ya redesign candidates ho sakte hain.
+
+18. Future Actions
+
+Meeting ke end me agree hua:
+
+Team recording review karegi.
+Questions Teams chat me bheje jayenge.
+Dummy-data dealer templates share kiye jayenge.
+Read-only access possibility compliance ke saath check ki jayegi.
+Next walkthrough me existing-dealer lifecycle, task wizard, document wizard aur reporting cover honge.
+One-Line Context for Another Chat
+
+CMD (Contract TV) ek legacy partner/dealer lifecycle management application hai jahan dealer onboarding, tasks, modules, documents, contract statuses aur historical tracking manage hoti hai. Core data model Dealer → Task → Documents/Modules hai. Approvals system ke bahar hote hain, CMD lifecycle tracking karta hai, aur meeting me onboarding flow, task creation, document versioning, status lifecycle, renewals, terminations aur legacy cleanup opportunities discuss hui thi.
