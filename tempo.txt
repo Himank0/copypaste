@@ -621,3 +621,26 @@ Enterprise usability over visual experimentation.
 
 When in doubt:
 choose the simpler, cleaner, more structured design.
+
+
+IMPORTANT:
+
+The application must look like a real enterprise Telstra product.
+
+Do NOT create SaaS startup style UIs.
+
+Do NOT create Material UI admin dashboard style screens.
+
+Do NOT create colorful analytics dashboard screens.
+
+Prioritize:
+- forms
+- workflow screens
+- data tables
+- review screens
+- search screens
+- accessibility
+- operational efficiency
+
+Visual benchmark:
+Telstra P2OD ordering journeys and enterprise operational applications.
