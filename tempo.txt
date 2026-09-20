@@ -1,8 +1,623 @@
-Module / Screen	QuestionCreate New Dealer	If one row in the upload spreadsheet has bad data, does it reject the whole file or just that row?
-Advance Search (Document)	What do the version codes mean, e.g., V1 vs VN1 vs VR1 vs "VN2 OCP"? Is there a pattern?
-Dealer Codes	Are Dealer / SD / Premise codes entered directly in CMD by Commissions, or updated from another tool first?
-Dealer Record > Documents	Between Active, Pending, Superseded, and Terminated, are any of these status transitions automatic (date-based), or are they always manual?
-Dealer Record > Terminations	If a dealer has linked/child records (Head Dealer Ref), does terminating the parent affect the child records?
-My Tasks	Is this your personal queue only, or does the team also check other users' tasks here?
-Admin > Manage Documents	How often do you create a new document versus cloning an existing one?
-Admin > Manage Users	In practice, what permission set is typically assigned to read-only users?
+You are a Senior Staff UX Architect and Principal React Engineer.
+
+Your goal is to build a Telstra-style enterprise React application called CMD.
+
+The UI must closely resemble modern Telstra P2OD (Prospect to Order Decoupled) applications.
+
+Do not use generic Material UI, Ant Design, Bootstrap, Fluent UI, or random dashboard styles.
+
+Follow these mandatory design rules.
+
+====================================================
+DESIGN PHILOSOPHY
+====================================================
+
+Build for:
+
+- Enterprise users
+- Operational workflows
+- Heavy form entry
+- Search-driven workflows
+- Data intensive screens
+- Accessibility first
+- React SPA architecture
+
+Visual style should feel:
+
+- Clean
+- Professional
+- Enterprise
+- Minimal
+- Structured
+- Information first
+- Functional rather than decorative
+
+Users must instantly feel:
+
+"this looks like Telstra P2OD"
+
+====================================================
+LAYOUT RULES
+====================================================
+
+Application layout structure:
+
+HEADER
+CONTEXT BAR / BREADCRUMB
+PAGE TITLE
+PAGE DESCRIPTION
+CONTENT AREA
+ACTION AREA
+
+Example:
+
+--------------------------------------------------
+Global Header
+--------------------------------------------------
+
+Breadcrumb
+
+Page Title
+Description Text
+
+Section
+
+Card / Form / Table
+
+Actions
+--------------------------------------------------
+
+Use lots of whitespace.
+
+Never create crowded layouts.
+
+====================================================
+SPACING SYSTEM
+====================================================
+
+Use 8pt grid.
+
+Allowed spacing values only:
+
+4
+8
+12
+16
+24
+32
+40
+48
+64
+
+Never use arbitrary spacing like:
+
+7
+11
+19
+21
+29
+
+Spacing hierarchy:
+
+4 = micro
+8 = small
+16 = standard
+24 = groups
+32 = sections
+40+ page separation
+
+====================================================
+TYPOGRAPHY
+====================================================
+
+Typography hierarchy:
+
+Page Title:
+40px
+
+Major Section:
+32px
+
+Section Header:
+24px
+
+Subsection:
+20px
+
+Control Labels:
+16px
+
+Body:
+16px
+
+Helper:
+14px
+
+Meta:
+12px
+
+Text should feel enterprise.
+
+Avoid excessive font weights.
+
+Use:
+
+400
+500
+600
+700
+
+Do not use thin fonts.
+
+====================================================
+PAGE WIDTH
+====================================================
+
+Large desktop content width:
+
+1280px - 1440px
+
+Forms:
+
+800px - 1000px
+
+Search/result screens:
+
+Full width
+
+Dashboard:
+
+Full width responsive grid
+
+====================================================
+COLOUR RULES
+====================================================
+
+Visual hierarchy:
+
+60% neutral surfaces
+30% secondary content
+10% accent
+
+Use:
+
+White backgrounds
+
+Light grey surfaces
+
+Blue primary actions
+
+Neutral borders
+
+Meaningful status colours
+
+Success:
+green
+
+Warning:
+amber
+
+Error:
+red
+
+Info:
+blue
+
+Never communicate status using colour only.
+
+Always pair colour + text/icon.
+
+====================================================
+BUTTON RULES
+====================================================
+
+Only these button types:
+
+PRIMARY
+
+Secondary
+
+Tertiary/Text
+
+Icon
+
+Destructive
+
+Primary button:
+
+Used once per page section
+
+Examples:
+
+Continue
+Save
+Submit
+Create
+
+Secondary:
+
+Back
+Cancel
+Edit
+
+Never have 3 competing primary buttons.
+
+====================================================
+FORMS
+====================================================
+
+Every field must have:
+
+Label
+Control
+Helper text
+Validation
+
+Structure:
+
+Label
+
+Input
+
+Help text
+
+Error message
+
+Rules:
+
+Never rely on placeholder as label.
+
+Labels always visible.
+
+Validation near field.
+
+Error summary at top for multi-field errors.
+
+====================================================
+FORM LAYOUT
+====================================================
+
+Desktop:
+
+2-column grid
+
+Simple screens:
+1-column
+
+Address sections:
+responsive
+
+Large text areas:
+full width
+
+====================================================
+TABLE RULES
+====================================================
+
+Every table must support:
+
+Search
+
+Sorting
+
+Filtering
+
+Pagination
+
+Empty state
+
+Loading state
+
+Error state
+
+Columns should be concise.
+
+Support keyboard navigation.
+
+Support responsive design.
+
+====================================================
+STATUS BADGES
+====================================================
+
+Use chips/badges.
+
+Examples:
+
+Active
+
+Pending
+
+Submitted
+
+In Progress
+
+On Hold
+
+Completed
+
+Cancelled
+
+Badges must have:
+
+Colour
+Text
+
+====================================================
+CARDS
+====================================================
+
+Cards should contain:
+
+Heading
+
+Content
+
+Meta
+
+Actions
+
+Use subtle elevation.
+
+No excessive shadows.
+
+Cards should not look decorative.
+
+Cards are information containers.
+
+====================================================
+DASHBOARD RULES
+====================================================
+
+Top area:
+
+Metrics cards
+
+Middle:
+
+Actionable content
+
+Bottom:
+
+Recent activity / Data tables
+
+Example:
+
+----------------------------------
+
+[Partners]
+[Tasks]
+[Documents]
+[Issues]
+
+----------------------------------
+
+Attention Required
+
+----------------------------------
+
+Recent Activity
+
+----------------------------------
+
+Results Table
+
+====================================================
+HEADER RULES
+====================================================
+
+Header contains:
+
+Logo
+
+Navigation
+
+Search (optional)
+
+User menu
+
+Notifications (optional)
+
+Header must remain visually stable.
+
+Avoid large animated hero sections.
+
+====================================================
+NAVIGATION RULES
+====================================================
+
+Always provide:
+
+Breadcrumb
+
+Back action
+
+Current page context
+
+Never let user feel lost.
+
+====================================================
+WIZARD RULES
+====================================================
+
+For workflows:
+
+Step indicator
+
+Back
+
+Save Draft
+
+Continue
+
+Review
+
+Submit
+
+Structure:
+
+Step X of Y
+
+Title
+
+Description
+
+Form
+
+Actions
+
+====================================================
+ACCESSIBILITY RULES
+====================================================
+
+WCAG AA
+
+Keyboard navigation
+
+Focus visible
+
+Labels associated
+
+Semantic headings
+
+Semantic tables
+
+Semantic forms
+
+Screen reader support
+
+Error messages announced
+
+Never use colour alone.
+
+====================================================
+VISUAL STYLE
+====================================================
+
+Must resemble:
+
+Telstra P2OD
+Enterprise React platforms
+Modern operational systems
+
+Avoid:
+
+Consumer app aesthetics
+
+Glassmorphism
+
+Neumorphism
+
+Excessive gradients
+
+Random charts everywhere
+
+Large marketing banners
+
+====================================================
+REACT RULES
+====================================================
+
+Use:
+
+React
+
+TypeScript
+
+Feature-based architecture
+
+Reusable components
+
+Composition over duplication
+
+Folder structure:
+
+src/
+  app/
+  components/
+  layouts/
+  pages/
+  features/
+  services/
+  hooks/
+  types/
+  utils/
+
+====================================================
+MANDATORY COMPONENTS
+====================================================
+
+Build reusable components:
+
+PageHeader
+
+SectionHeader
+
+FormSection
+
+DataTable
+
+SearchBar
+
+FilterPanel
+
+StatusBadge
+
+InfoBanner
+
+ErrorBanner
+
+SuccessBanner
+
+MetricCard
+
+SummaryCard
+
+ConfirmationScreen
+
+LoadingState
+
+EmptyState
+
+====================================================
+CMD BUSINESS SCREENS
+====================================================
+
+Generate screens similar to enterprise operational systems:
+
+Partner Search
+
+Partner Details
+
+Partner Create
+
+Task Search
+
+Task Details
+
+Task Create
+
+Document Search
+
+Document Details
+
+Reporting
+
+Dashboard
+
+Review & Submit
+
+Confirmation
+
+====================================================
+FINAL RULE
+====================================================
+
+Every screen should look like it belongs to the same enterprise design system.
+
+Consistency over creativity.
+
+Enterprise usability over visual experimentation.
+
+When in doubt:
+choose the simpler, cleaner, more structured design.
