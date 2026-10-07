@@ -1,0 +1,57 @@
+.cmd-toast-viewport {
+  position: fixed;
+  bottom: var(--cmd-space-5, 20px);
+  right: var(--cmd-space-5, 20px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--cmd-space-2, 8px);
+  z-index: 1000;
+  max-width: 360px;
+}
+
+.cmd-toast {
+  display: flex;
+  align-items: center;
+  gap: var(--cmd-space-2, 8px);
+  padding: var(--cmd-space-3, 12px) var(--cmd-space-4, 16px);
+  border-radius: var(--cmd-radius-md);
+  box-shadow: var(--cmd-shadow-md);
+  font-size: var(--cmd-font-size-base);
+  color: var(--cmd-color-text-inverse);
+  background-color: var(--cmd-color-text);
+  animation: cmd-toast-in 0.15s ease-out;
+}
+
+.cmd-toast--success {
+  background-color: var(--cmd-color-success);
+}
+
+.cmd-toast--error {
+  background-color: var(--cmd-color-danger);
+}
+
+.cmd-toast--info {
+  background-color: var(--cmd-color-primary);
+}
+
+.cmd-toast__dismiss {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: var(--cmd-font-size-base);
+  line-height: 1;
+  padding: 0;
+}
+
+@keyframes cmd-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,27 @@
+.home-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cmd-space-6);
+  padding: var(--cmd-space-6);
+  background-color: var(--cmd-color-bg-subtle);
+  min-height: calc(100vh - 64px);
+}
+
+.home-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cmd-space-4);
+}
+
+.home-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cmd-space-3);
+  margin-bottom: var(--cmd-space-2);
+}
+
+.home-page__stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--cmd-space-4);
+}

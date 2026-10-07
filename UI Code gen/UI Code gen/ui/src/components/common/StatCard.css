@@ -1,0 +1,50 @@
+.cmd-stat-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--cmd-space-2, 8px);
+  background-color: var(--cmd-color-bg);
+  border: 1px solid var(--cmd-color-border);
+  border-radius: var(--cmd-radius-md);
+  box-shadow: var(--cmd-shadow-sm);
+  padding: var(--cmd-space-4, 16px) var(--cmd-space-4, 16px) var(--cmd-space-3, 12px);
+  overflow: hidden;
+}
+
+.cmd-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: var(--stat-accent-color, var(--cmd-color-primary));
+}
+
+.cmd-stat-card__value {
+  font-size: var(--cmd-font-size-xl);
+  font-weight: 700;
+  color: var(--cmd-color-text);
+  line-height: 1.1;
+}
+
+.cmd-stat-card__label {
+  font-size: var(--cmd-font-size-sm);
+  color: var(--cmd-color-text-muted);
+}
+
+.cmd-stat-card__bar {
+  height: 4px;
+  border-radius: 2px;
+  background-color: var(--stat-accent-color, var(--cmd-color-primary));
+  width: 100%;
+  margin-top: var(--cmd-space-1, 4px);
+}
+
+/* Accent color variants */
+.cmd-stat-card--red { --stat-accent-color: var(--cmd-color-danger); }
+.cmd-stat-card--blue { --stat-accent-color: var(--cmd-color-primary); }
+.cmd-stat-card--green { --stat-accent-color: var(--cmd-color-success); }
+.cmd-stat-card--teal { --stat-accent-color: var(--cmd-color-teal); }
+.cmd-stat-card--purple { --stat-accent-color: var(--cmd-color-purple); }
+.cmd-stat-card--orange { --stat-accent-color: var(--cmd-color-warning); }

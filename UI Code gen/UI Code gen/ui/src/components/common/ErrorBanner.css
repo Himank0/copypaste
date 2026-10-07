@@ -1,0 +1,34 @@
+.cmd-error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cmd-space-3, 12px);
+  padding: var(--cmd-space-4, 16px);
+  background-color: rgba(206, 23, 53, 0.08);
+  border: 1px solid var(--cmd-color-danger);
+  border-radius: var(--cmd-radius-md);
+  color: var(--cmd-color-danger);
+  font-size: var(--cmd-font-size-base);
+}
+
+.cmd-error-banner__message {
+  flex: 1 1 auto;
+}
+
+.cmd-error-banner__retry {
+  flex: 0 0 auto;
+  font-family: inherit;
+  font-size: var(--cmd-font-size-sm);
+  font-weight: 600;
+  color: var(--cmd-color-danger);
+  background: none;
+  border: 1px solid var(--cmd-color-danger);
+  border-radius: var(--cmd-radius-sm);
+  padding: var(--cmd-space-1, 4px) var(--cmd-space-3, 12px);
+  cursor: pointer;
+}
+
+.cmd-error-banner__retry:hover {
+  background-color: var(--cmd-color-danger);
+  color: var(--cmd-color-text-inverse);
+}

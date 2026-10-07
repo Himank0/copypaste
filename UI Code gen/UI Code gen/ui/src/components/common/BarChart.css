@@ -1,0 +1,50 @@
+.cmd-bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--cmd-space-4, 16px);
+  height: 180px;
+  padding: var(--cmd-space-4, 16px);
+  background-color: var(--cmd-color-bg);
+  border: 1px solid var(--cmd-color-border);
+  border-radius: var(--cmd-radius-md);
+  box-shadow: var(--cmd-shadow-sm);
+}
+
+.cmd-bar-chart__column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--cmd-space-2, 8px);
+  flex: 1 1 0;
+  height: 100%;
+}
+
+.cmd-bar-chart__bar {
+  width: 100%;
+  max-width: 48px;
+  border-radius: var(--cmd-radius-sm) var(--cmd-radius-sm) 0 0;
+  background-color: var(--bar-accent-color, var(--cmd-color-primary));
+  min-height: 2px;
+  transition: height 0.2s ease;
+}
+
+.cmd-bar-chart__value {
+  font-size: var(--cmd-font-size-sm);
+  font-weight: 600;
+  color: var(--cmd-color-text);
+}
+
+.cmd-bar-chart__label {
+  font-size: var(--cmd-font-size-sm);
+  color: var(--cmd-color-text-muted);
+  text-align: center;
+}
+
+/* Accent color variants (shared naming with StatCard) */
+.cmd-bar-chart__column--red { --bar-accent-color: var(--cmd-color-danger); }
+.cmd-bar-chart__column--blue { --bar-accent-color: var(--cmd-color-primary); }
+.cmd-bar-chart__column--green { --bar-accent-color: var(--cmd-color-success); }
+.cmd-bar-chart__column--teal { --bar-accent-color: var(--cmd-color-teal); }
+.cmd-bar-chart__column--purple { --bar-accent-color: var(--cmd-color-purple); }
+.cmd-bar-chart__column--orange { --bar-accent-color: var(--cmd-color-warning); }

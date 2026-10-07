@@ -1,0 +1,110 @@
+.app-shell-header {
+  height: 70px;
+  padding: 0 32px;
+  display: flex;
+  align-items: stretch;
+  gap: var(--cmd-space-5);
+  background-color: var(--cmd-color-bg);
+  border-bottom: 1px solid var(--cmd-color-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--cmd-shadow-sm);
+}
+
+.app-shell-brand {
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: var(--cmd-space-2);
+  cursor: pointer;
+  padding: 0;
+}
+
+.app-shell-brand__logo {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  color: var(--cmd-color-text-inverse);
+  background-color: var(--cmd-color-primary);
+  border-radius: 10px 16px 10px 16px;
+  font-size: 22px;
+  font-weight: 900;
+  font-style: italic;
+}
+
+.app-shell-nav {
+  display: flex;
+  align-items: stretch;
+  gap: var(--cmd-space-1);
+  flex: 1;
+}
+
+.app-shell-nav__button {
+  border: 0;
+  background: transparent;
+  padding: 0 var(--cmd-space-4);
+  font-weight: 600;
+  font-size: var(--cmd-font-size-sm);
+  color: var(--cmd-color-text-muted);
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cmd-space-1);
+}
+
+.app-shell-nav__button:hover {
+  color: var(--cmd-color-primary);
+}
+
+.app-shell-nav__button--active {
+  color: var(--cmd-color-primary);
+  border-bottom-color: var(--cmd-color-primary);
+  font-weight: 700;
+}
+
+.app-shell-user {
+  display: flex;
+  align-items: center;
+  gap: var(--cmd-space-3);
+}
+
+.app-shell-user__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--cmd-color-primary-active);
+  color: var(--cmd-color-text-inverse);
+  display: grid;
+  place-items: center;
+  font-size: var(--cmd-font-size-sm);
+  font-weight: 700;
+}
+
+.app-shell-user__name {
+  font-size: var(--cmd-font-size-sm);
+  font-weight: 600;
+  color: var(--cmd-color-text);
+  white-space: nowrap;
+}
+
+.app-shell-user__logout {
+  font-family: inherit;
+  font-size: var(--cmd-font-size-sm);
+  font-weight: 700;
+  color: var(--cmd-color-text);
+  background-color: var(--cmd-color-bg);
+  border: 1px solid var(--cmd-color-border-strong);
+  border-radius: 999px;
+  padding: var(--cmd-space-1) var(--cmd-space-4);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.app-shell-user__logout:hover {
+  border-color: var(--cmd-color-primary);
+  color: var(--cmd-color-primary);
+}

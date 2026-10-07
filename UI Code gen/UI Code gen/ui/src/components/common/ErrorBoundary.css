@@ -1,0 +1,29 @@
+.cmd-error-boundary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cmd-space-3, 12px);
+  min-height: 60vh;
+  padding: var(--cmd-space-6, 32px);
+  text-align: center;
+}
+
+.cmd-error-boundary__title {
+  font-size: var(--cmd-font-size-lg, 24px);
+  color: var(--cmd-color-text);
+}
+
+.cmd-error-boundary__message {
+  max-width: 480px;
+  color: var(--cmd-color-text-muted, #555);
+}
+
+.cmd-error-boundary__button {
+  margin-top: var(--cmd-space-2, 8px);
+  padding: var(--cmd-space-2, 8px) var(--cmd-space-4, 16px);
+  border: 1px solid var(--cmd-color-border);
+  border-radius: var(--cmd-radius-sm);
+  background-color: var(--cmd-color-bg);
+  cursor: pointer;
+}

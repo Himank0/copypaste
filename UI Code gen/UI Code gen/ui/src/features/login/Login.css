@@ -1,0 +1,107 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--cmd-color-bg-subtle);
+  padding: var(--cmd-space-5);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background-color: var(--cmd-color-bg);
+  border: 1px solid var(--cmd-color-border);
+  border-radius: var(--cmd-radius-md);
+  box-shadow: var(--cmd-shadow-md);
+  padding: var(--cmd-space-6);
+}
+
+.login-card__title {
+  margin: 0 0 var(--cmd-space-2);
+  font-size: var(--cmd-font-size-xl);
+  color: var(--cmd-color-text);
+}
+
+.login-card__subtitle {
+  margin: 0 0 var(--cmd-space-5);
+  font-size: var(--cmd-font-size-sm);
+  color: var(--cmd-color-text-muted);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cmd-space-4);
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cmd-space-1);
+}
+
+.login-field__label {
+  font-size: var(--cmd-font-size-sm);
+  font-weight: 600;
+  color: var(--cmd-color-text);
+}
+
+.login-field__input {
+  font-family: inherit;
+  font-size: var(--cmd-font-size-base);
+  padding: var(--cmd-space-2) var(--cmd-space-3);
+  border: 1px solid var(--cmd-color-border);
+  border-radius: var(--cmd-radius-sm);
+  color: var(--cmd-color-text);
+  background-color: var(--cmd-color-bg);
+}
+
+.login-field__input:focus-visible {
+  outline: 2px solid var(--cmd-color-focus-ring);
+  outline-offset: 1px;
+}
+
+.login-field__input--invalid {
+  border-color: var(--cmd-color-danger);
+}
+
+.login-field__error {
+  font-size: var(--cmd-font-size-sm);
+  color: var(--cmd-color-danger);
+}
+
+.login-form__error {
+  font-size: var(--cmd-font-size-sm);
+  color: var(--cmd-color-danger);
+  background-color: #fdeceb;
+  border: 1px solid var(--cmd-color-danger);
+  border-radius: var(--cmd-radius-sm);
+  padding: var(--cmd-space-2) var(--cmd-space-3);
+}
+
+.login-form__submit {
+  margin-top: var(--cmd-space-2);
+  font-family: inherit;
+  font-size: var(--cmd-font-size-base);
+  font-weight: 600;
+  color: var(--cmd-color-text-inverse);
+  background-color: var(--cmd-color-primary);
+  border: none;
+  border-radius: var(--cmd-radius-sm);
+  padding: var(--cmd-space-3) var(--cmd-space-4);
+  cursor: pointer;
+}
+
+.login-form__submit:hover:not(:disabled) {
+  background-color: var(--cmd-color-primary-hover);
+}
+
+.login-form__submit:active:not(:disabled) {
+  background-color: var(--cmd-color-primary-active);
+}
+
+.login-form__submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}

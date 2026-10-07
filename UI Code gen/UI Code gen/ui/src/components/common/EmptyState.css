@@ -1,0 +1,18 @@
+.cmd-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cmd-space-2, 8px);
+  padding: var(--cmd-space-6, 32px);
+  color: var(--cmd-color-text-muted);
+  text-align: center;
+}
+
+.cmd-empty-state__icon {
+  font-size: var(--cmd-font-size-xl);
+}
+
+.cmd-empty-state__message {
+  font-size: var(--cmd-font-size-base);
+}

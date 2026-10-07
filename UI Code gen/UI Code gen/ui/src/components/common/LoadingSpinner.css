@@ -1,0 +1,28 @@
+.cmd-loading-spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cmd-space-3, 12px);
+  padding: var(--cmd-space-5, 20px);
+  color: var(--cmd-color-text-muted);
+  font-size: var(--cmd-font-size-base);
+}
+
+.cmd-loading-spinner--fullwidth {
+  width: 100%;
+}
+
+.cmd-loading-spinner__icon {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--cmd-color-border);
+  border-top-color: var(--cmd-color-primary);
+  border-radius: 50%;
+  animation: cmd-spin 0.7s linear infinite;
+}
+
+@keyframes cmd-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

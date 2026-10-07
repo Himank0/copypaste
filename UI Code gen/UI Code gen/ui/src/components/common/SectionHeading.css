@@ -1,0 +1,21 @@
+.cmd-section-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cmd-space-1, 4px);
+  margin-bottom: var(--cmd-space-4, 16px);
+}
+
+.cmd-section-heading__eyebrow {
+  font-size: var(--cmd-font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cmd-color-primary);
+}
+
+.cmd-section-heading__title {
+  font-size: var(--cmd-font-size-xl);
+  font-weight: 700;
+  color: var(--cmd-color-text);
+  margin: 0;
+}

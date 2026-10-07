@@ -1,0 +1,82 @@
+/* Button component relies solely on tokens already defined in App.css */
+
+.cmd-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cmd-space-2, 8px);
+  font-family: var(--cmd-font-family);
+  font-size: var(--cmd-font-size-base);
+  font-weight: 600;
+  line-height: 1.2;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  padding: var(--cmd-space-3, 10px) var(--cmd-space-5, 20px);
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.cmd-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.cmd-button:focus-visible {
+  outline: 2px solid var(--cmd-color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Variants */
+.cmd-button--filled {
+  background-color: var(--cmd-color-primary);
+  border-color: var(--cmd-color-primary);
+  color: var(--cmd-color-text-inverse);
+}
+.cmd-button--filled:hover:not(:disabled) {
+  background-color: var(--cmd-color-primary-hover);
+  border-color: var(--cmd-color-primary-hover);
+}
+
+.cmd-button--outline {
+  background-color: var(--cmd-color-bg);
+  border-color: var(--cmd-color-border-strong);
+  color: var(--cmd-color-text);
+}
+.cmd-button--outline:hover:not(:disabled) {
+  background-color: var(--cmd-color-bg-subtle);
+  border-color: var(--cmd-color-primary);
+}
+
+.cmd-button--ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--cmd-color-text);
+}
+.cmd-button--ghost:hover:not(:disabled) {
+  background-color: var(--cmd-color-bg-subtle);
+}
+
+/* Sizes */
+.cmd-button--sm {
+  padding: var(--cmd-space-2, 8px) var(--cmd-space-4, 16px);
+  font-size: var(--cmd-font-size-sm);
+}
+
+.cmd-button__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.25);
+  font-size: var(--cmd-font-size-sm);
+}
+
+.cmd-button--outline .cmd-button__badge,
+.cmd-button--ghost .cmd-button__badge {
+  background-color: var(--cmd-color-bg-subtle);
+  color: var(--cmd-color-text-muted);
+}
